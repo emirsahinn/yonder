@@ -1,0 +1,274 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Yonder — Firestore Security Rules (Draft)
+//
+// Bu dosya Production'a deploy edilmeden önce Firebase Console'da test edilmeli.
+// firebase deploy --only firestore:rules  komutuyla uygulanır.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper Functions ────────────────────────────────────────────────────
+
+    /// Kullanıcı kimliği doğrulanmış mı (anonim dahil)?
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    /// Mevcut kullanıcı belirtilen uid'e sahip mi?
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    /// Gelen veri alanı geçerli bir status değeri taşıyor mu?
+    function isValidRoomStatus(status) {
+      return status in ['waiting', 'running', 'ended'];
+    }
+
+    function isValidParticipantStatus(status) {
+      return status in ['studying', 'break'];
+    }
+
+    /// Oda süresinin makul aralıkta olduğunu doğrula (60 saniye – 4 saat)
+    function isValidDuration(durationValue) {
+      return durationValue is int && durationValue >= 60 && durationValue <= 14400;
+    }
+
+    function isValidParticipantCount(count) {
+      return count is int && count >= 0 && count <= 50;
+    }
+
+    /// Mevcut document verisi var mı?
+    function existingData() {
+      return resource.data;
+    }
+
+    /// Mevcut kullanıcı belirtilen odanın katılımcısı mı?
+    function isRoomParticipant(code) {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/rooms/$(code)/participants/$(request.auth.uid));
+    }
+
+    // ─── users/{uid} ──────────────────────────────────────────────────────────
+    // Kullanıcı ana dokümanı. Yalnızca hesap sahibi okuyabilir, yazabilir ve silebilir.
+
+    match /users/{uid} {
+      allow read, write, delete: if isOwner(uid);
+    }
+
+    // ─── users/{uid}/sessions/{sessionId} ────────────────────────────────────
+    // Yalnızca oturum sahibi (uid) okuyabilir ve yazabilir.
+
+    match /users/{uid}/sessions/{sessionId} {
+
+      // Okuma: sadece kendi oturumlarına erişim
+      allow read: if isOwner(uid);
+
+      // Yazma: sadece kendi uid'i üzerinden, gerekli alanlar mevcut olmalı
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasAll(['id', 'date', 'durationSeconds', 'completed'])
+        && request.resource.data.durationSeconds is int
+        && request.resource.data.durationSeconds >= 0
+        && request.resource.data.completed is bool;
+
+      // Güncelleme: sadece kendi oturumu, kritik alanlar değiştirilemiyor
+      allow update: if isOwner(uid)
+        && request.resource.data.id == resource.data.id;
+
+      // Silme: sadece kendi oturumu
+      allow delete: if isOwner(uid);
+    }
+
+    // ─── users/{uid}/subjects/{subjectId} ─────────────────────────────────────
+    // Çalışmalarım (iş alanı adları). Yalnızca hesap sahibi okuyup yazabilir.
+
+    match /users/{uid}/subjects/{subjectId} {
+
+      allow read: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasAll(['id', 'name', 'lastUsedDate'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100;
+
+      allow update: if isOwner(uid)
+        && request.resource.data.id == resource.data.id;  // id değiştirilemez
+
+      allow delete: if isOwner(uid);
+    }
+
+    // ─── users/{uid}/goals/{goalId} ───────────────────────────────────────────
+    // Odak hedefleri. Yalnızca hesap sahibi okuyup yazabilir.
+
+    match /users/{uid}/goals/{goalId} {
+
+      allow read: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasAll(['id', 'scope', 'period', 'mode', 'targetSeconds', 'isEnabled'])
+        && request.resource.data.targetSeconds is int
+        && request.resource.data.targetSeconds >= 0
+        && request.resource.data.isEnabled is bool
+        && request.resource.data.scope in ['total', 'workArea']
+        && request.resource.data.period in ['daily', 'weekly', 'monthly']
+        && request.resource.data.mode in ['recurring', 'periodSpecific'];
+
+      allow update: if isOwner(uid)
+        && request.resource.data.id == resource.data.id;  // id değiştirilemez
+
+      allow delete: if isOwner(uid);
+    }
+
+    // ─── rooms/{code} ────────────────────────────────────────────────────────
+    // Oda dökümanları: kimliği doğrulanmış herkes okuyabilir.
+    // Yazma işlemleri kısıtlıdır.
+
+    match /rooms/{code} {
+
+      // Okuma: yalnızca bilinen bir oda koduyla doğrudan doküman erişimi (get).
+      // "list" bilerek verilmiyor — aksi halde herhangi bir kullanıcı tüm
+      // "rooms" koleksiyonunu sorgulayarak aktif oda kodlarını, hostId ve
+      // subject alanlarını brute-force gerekmeden toplu olarak elde edebilirdi.
+      // Uygulama kodu odaya her zaman document(code) ile doğrudan erişiyor,
+      // koleksiyon genelinde sorgu atmıyor (bkz. RoomService.swift), bu yüzden
+      // bu kısıtlama mevcut davranışı bozmaz.
+      allow get: if isAuthenticated();
+
+      // Listeleme: yalnızca kullanıcının host olduğu odalar için izinli.
+      // AccountDeletionService hesap silerken kullanıcının aktif host odalarını
+      // güvenli şekilde "ended" durumuna getirmek için hostId == uid sorgusu atar.
+      // Bu kural genel oda enumeration'a izin vermez; sorgu hostId filtresiyle
+      // request.auth.uid'e daraltılmak zorundadır.
+      allow list: if isAuthenticated()
+        && existingData().hostId == request.auth.uid;
+
+      // Oluşturma: kimliği doğrulanmış kullanıcı, hostId kendi uid'i olmalı
+      allow create: if isAuthenticated()
+        && request.resource.data.hostId == request.auth.uid
+        && isValidRoomStatus(request.resource.data.status)
+        && request.resource.data.status == 'waiting'
+        && isValidDuration(request.resource.data.duration)
+        && isValidParticipantCount(request.resource.data.participantCount)
+        && request.resource.data.participantCount == 1
+        && request.resource.data.keys().hasAll(['hostId', 'duration', 'status', 'createdAt']);
+
+      // Güncelleme:
+      // a) Host her alanı güncelleyebilir (startRoom / endRoom çağrıları)
+      // b) Non-host authenticated kullanıcı: SADECE süre dolduğunda status=ended yapabilir.
+      //    Bu "endRoomIfNeeded" senaryosunu destekler.
+      // c) Katılım/ayrılma transaction'ları participantCount alanını güncelleyebilir.
+      // d) Odadaki son kişi ayrılıyorsa oda otomatik ended yapılabilir.
+      allow update: if isAuthenticated()
+        && (
+          // Host tüm güvenli güncellemeleri yapabilir
+          (request.auth.uid == existingData().hostId
+            && isValidRoomStatus(request.resource.data.status)
+            && (
+              !request.resource.data.keys().hasAny(['participantCount'])
+              || isValidParticipantCount(request.resource.data.participantCount)
+            )
+            && existingData().hostId == request.resource.data.hostId  // hostId değiştirilemez
+          )
+          ||
+          // Join/leave: sadece participantCount 1 artar veya 1 azalır
+          (existingData().status != 'ended'
+            && existingData().participantCount is int
+            && isValidParticipantCount(request.resource.data.participantCount)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantCount'])
+            && (
+              request.resource.data.participantCount == existingData().participantCount + 1
+              || request.resource.data.participantCount == existingData().participantCount - 1
+            )
+          )
+          ||
+          // Son katılımcı ayrılırsa oda otomatik biter
+          (existingData().status != 'ended'
+            && existingData().participantCount is int
+            && existingData().participantCount <= 1
+            && request.resource.data.status == 'ended'
+            && request.resource.data.participantCount == 0
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'endedAt', 'participantCount'])
+          )
+          ||
+          // Non-host: sadece "ended" durumuna geçiş, ve SADECE endTimestamp geçmişse
+          (request.auth.uid != existingData().hostId
+            && existingData().status == 'running'
+            && request.resource.data.status == 'ended'
+            && existingData().endTimestamp != null
+            && existingData().endTimestamp <= request.time
+            // Başka alan değiştirilemez
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'endedAt'])
+          )
+        );
+
+      // Silme: Yalnızca host (ileride gerekirse)
+      allow delete: if isAuthenticated()
+        && request.auth.uid == existingData().hostId;
+
+      // ─── rooms/{code}/participants/{uid} ─────────────────────────────────
+      // Katılımcı alt koleksiyonu.
+
+      match /participants/{participantUid} {
+
+        // Okuma: kullanıcı kendi participant kaydını veya katıldığı odanın
+        // katılımcı listesini okuyabilir. Oda dışındaki authenticated kullanıcılar
+        // katılımcı isimlerini/durumlarını göremez.
+        allow get, list: if isOwner(participantUid)
+          || isRoomParticipant(code);
+
+        // Katılım (create/update): kendi participant doc'u
+        allow create: if isOwner(participantUid)
+          && request.resource.data.keys().hasAll(['displayName', 'status', 'ready', 'joinedAt'])
+          && isValidParticipantStatus(request.resource.data.status)
+          && request.resource.data.ready is bool
+          && request.resource.data.displayName is string
+          && request.resource.data.displayName.size() > 0
+          && request.resource.data.displayName.size() <= 50
+          && (!('workItemName' in request.resource.data) || (request.resource.data.workItemName is string && request.resource.data.workItemName.size() <= 100))
+          && (!('workItemId' in request.resource.data) || (request.resource.data.workItemId is string && request.resource.data.workItemId.size() <= 100))
+          && (!('activeSeconds' in request.resource.data) || (request.resource.data.activeSeconds is int && request.resource.data.activeSeconds >= 0 && request.resource.data.activeSeconds <= 86400))
+          && (!('breakSeconds' in request.resource.data) || (request.resource.data.breakSeconds is int && request.resource.data.breakSeconds >= 0 && request.resource.data.breakSeconds <= 86400));
+
+        // Güncelleme: yalnızca kendi doc'u, sınırlı alanlar
+        allow update: if isOwner(participantUid)
+          && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['status', 'ready', 'workItemName', 'workItemId', 'workItemUpdatedAt', 'activeSeconds', 'breakSeconds', 'lastStatusChangedAt', 'joinedAt', 'leftAt', 'finalizedActiveSeconds', 'finalizedBreakSeconds'])
+          && (
+            !('status' in request.resource.data.diff(resource.data).affectedKeys())
+            || isValidParticipantStatus(request.resource.data.status)
+            || request.resource.data.status in ['left', 'exited']
+          )
+          && (
+            !('ready' in request.resource.data.diff(resource.data).affectedKeys())
+            || request.resource.data.ready is bool
+          )
+          && (
+            !('workItemName' in request.resource.data.diff(resource.data).affectedKeys())
+            || (request.resource.data.workItemName is string && request.resource.data.workItemName.size() <= 100)
+          )
+          && (
+            !('workItemId' in request.resource.data.diff(resource.data).affectedKeys())
+            || (request.resource.data.workItemId is string && request.resource.data.workItemId.size() <= 100)
+          )
+          && (
+            !('activeSeconds' in request.resource.data.diff(resource.data).affectedKeys())
+            || (request.resource.data.activeSeconds is int && request.resource.data.activeSeconds >= 0 && request.resource.data.activeSeconds <= 86400)
+          )
+          && (
+            !('breakSeconds' in request.resource.data.diff(resource.data).affectedKeys())
+            || (request.resource.data.breakSeconds is int && request.resource.data.breakSeconds >= 0 && request.resource.data.breakSeconds <= 86400)
+          );
+
+        // Çıkış (delete): kendi participant doc'u
+        allow delete: if isOwner(participantUid)
+          // Host da katılımcıları çıkarabilir (ilerideki özellik için hazır)
+          || (isAuthenticated() && request.auth.uid == get(/databases/$(database)/documents/rooms/$(code)).data.hostId);
+      }
+    }
+
+  }
+}
+

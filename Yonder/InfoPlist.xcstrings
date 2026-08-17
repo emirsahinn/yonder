@@ -1,0 +1,108 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Access to your photo library is needed to choose a profile picture." : {
+      "comment" : "Privacy - Photo Library Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access to your photo library is needed to choose a profile picture."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil fotoğrafını seçmek için fotoğraf kitaplığına erişim gerekir."
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Yonder"
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryUsageDescription" : {
+      "comment" : "Privacy - Photo Library Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access to your photo library is needed to choose a profile picture."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil fotoğrafını seçmek için fotoğraf kitaplığına erişim gerekir."
+          }
+        }
+      }
+    },
+    "Start 25 Minutes" : {
+      "comment" : "Home screen quick action title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start 25 Minutes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25 Dakika Başlat"
+          }
+        }
+      }
+    },
+    "Start 45 Minutes" : {
+      "comment" : "Home screen quick action title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start 45 Minutes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 Dakika Başlat"
+          }
+        }
+      }
+    },
+    "Start 60 Minutes" : {
+      "comment" : "Home screen quick action title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start 60 Minutes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60 Dakika Başlat"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
