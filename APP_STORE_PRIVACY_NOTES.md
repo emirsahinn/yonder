@@ -87,7 +87,7 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 - Dosya konumu: `/Yonder/GoogleService-Info.plist` ✅ disk üzerinde mevcut
 - Build süreci başarıyla tamamlanıyor ✅
 - `.gitignore`'a eklendi ve şu an git tarafından takip edilmiyor ✅
-- **DİKKAT**: Dosya `73342ee` ("Initial commit") commit'inde bir süre track edilmiş ve `origin/main`'e (github.com/emirsahinn/yonder) push edilmiş durumda. Git geçmişinde hâlâ mevcut — repo public ise `API_KEY`, `CLIENT_ID`, `REVERSED_CLIENT_ID`, `GOOGLE_APP_ID`, `PROJECT_ID`, `STORAGE_BUCKET` değerleri erişilebilir. Repo görünürlüğünü kontrol edin; public ise ya private'a alın ya da `git filter-repo`/BFG ile geçmişten temizleyip force-push yapmayı ve Firebase Console'da API key'i bundle ID kısıtlamasıyla sınırlamayı değerlendirin.
+- **ÇÖZÜLDÜ**: Dosya `73342ee` ("Initial commit") commit'inde bir süre track edilmiş ve `origin/main`'e push edilmiş durumdaydı. Repo tek bir temiz "Initial commit" ile yeniden yazılıp force-push edildi (2026-08-17); dosya artık git geçmişinin hiçbir yerinde yok, `.gitignore` ile takip dışı bırakıldı.
 
 ---
 

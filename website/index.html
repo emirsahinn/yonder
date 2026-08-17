@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="icon" type="image/png" href="data:image/png;base64,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" />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <title id="docTitle">Yonder</title>
 <meta id="docDescription" name="description" content="Yonder is a focused timer for iPhone and iPad with work areas, shared focus rooms, Live Activity, and weekly reports. Start free, expand with PRO." />
 <style>
@@ -133,8 +137,9 @@ p { margin: 0; color: var(--ink-dim); text-wrap: pretty; max-width: 62ch; }
 .nav-cta {
   font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--ink-faint); border: 1px solid var(--hairline-strong); border-radius: 999px;
-  padding: 7px 14px; white-space: nowrap;
+  padding: 7px 14px; white-space: nowrap; text-decoration: none; transition: border-color 0.15s ease, color 0.15s ease;
 }
+.nav-cta:hover { border-color: var(--ink); color: var(--ink); }
 .navlinks-wrap { display: flex; align-items: center; gap: 18px; }
 @media (max-width: 720px) {
   .navlinks { display: none; }
@@ -521,7 +526,7 @@ footer { padding: 64px 0 40px; }
       <button type="button" id="langBtnEn" data-lang-btn="en">EN</button>
       <button type="button" id="langBtnTr" data-lang-btn="tr">TR</button>
     </div>
-    <span class="nav-cta"><svg class="apple-mark" style="margin-right:6px;"><use href="#apple-mark"></use></svg><span data-i18n="nav.cta">App Store — soon</span></span>
+    <a class="nav-cta" href="https://apps.apple.com/app/id6797641442" target="_blank" rel="noopener"><svg class="apple-mark" style="margin-right:6px;"><use href="#apple-mark"></use></svg><span data-i18n="nav.cta">App Store</span></a>
   </div>
 </nav>
 
@@ -533,7 +538,7 @@ footer { padding: 64px 0 40px; }
       <h1 data-i18n="hero.h1">Make your focus visible.</h1>
       <p class="lede" data-i18n="hero.lede">Create a separate work area for every class, project, or habit. Focus alone or in a room with friends, keep every session recorded, and let the timer continue on your Lock Screen and Dynamic Island.</p>
       <div class="hero-ctas">
-        <span class="btn soon"><svg class="apple-mark"><use href="#apple-mark"></use></svg><span data-i18n="hero.cta.soon">Coming soon on the App Store</span></span>
+        <a class="btn btn-primary" href="https://apps.apple.com/app/id6797641442" target="_blank" rel="noopener"><svg class="apple-mark"><use href="#apple-mark"></use></svg><span data-i18n="hero.cta.soon">Download on the App Store</span></a>
         <a class="btn btn-ghost" href="#areas" data-i18n="hero.cta.how">See how it works ↓</a>
       </div>
       <p class="hero-note" data-i18n="hero.note">No account required to start. Free to use — Yonder PRO is optional.</p>
@@ -803,7 +808,7 @@ footer { padding: 64px 0 40px; }
     </div>
     <div class="footer-bottom">
       <p data-i18n="footer.bottom.copyright">© 2026 Yonder. Made by Emir Şahin.</p>
-      <p style="display:inline-flex;align-items:center;gap:6px;"><svg class="apple-mark"><use href="#apple-mark"></use></svg><span data-i18n="footer.bottom.soon">Coming soon on the App Store</span></p>
+      <a style="display:inline-flex;align-items:center;gap:6px;color:inherit;text-decoration:none;" href="https://apps.apple.com/app/id6797641442" target="_blank" rel="noopener"><svg class="apple-mark"><use href="#apple-mark"></use></svg><span data-i18n="footer.bottom.soon">Download on the App Store</span></a>
     </div>
   </div>
 </footer>
@@ -819,11 +824,11 @@ footer { padding: 64px 0 40px; }
       "nav.rooms": "Focus Rooms",
       "nav.pro": "Pro",
       "nav.faq": "FAQ",
-      "nav.cta": "App Store — soon",
+      "nav.cta": "App Store",
       "hero.eyebrow": "Work-area focus timer <span class=\"dot\">·</span> iPhone &amp; iPad",
       "hero.h1": "Make your focus visible.",
       "hero.lede": "Create a separate work area for every class, project, or habit. Focus alone or in a room with friends, keep every session recorded, and let the timer continue on your Lock Screen and Dynamic Island.",
-      "hero.cta.soon": "Coming soon on the App Store",
+      "hero.cta.soon": "Download on the App Store",
       "hero.cta.how": "See how it works ↓",
       "hero.note": "No account required to start. Free to use — Yonder PRO is optional.",
       "timer.live": "Live demo",
@@ -915,7 +920,7 @@ footer { padding: 64px 0 40px; }
       "footer.col.yonder.faq": "FAQ",
       "footer.col.contact": "Contact",
       "footer.bottom.copyright": "© 2026 Yonder. Made by Emir Şahin.",
-      "footer.bottom.soon": "Coming soon on the App Store",
+      "footer.bottom.soon": "Download on the App Store",
       "doc.title": "Yonder",
       "doc.description": "Yonder is a focused timer for iPhone and iPad with work areas, shared focus rooms, Live Activity, and weekly reports. Start free, expand with PRO."
     },
@@ -924,11 +929,11 @@ footer { padding: 64px 0 40px; }
       "nav.rooms": "Odaklanma Odaları",
       "nav.pro": "Pro",
       "nav.faq": "SSS",
-      "nav.cta": "App Store — yakında",
+      "nav.cta": "App Store",
       "hero.eyebrow": "Çalışma alanı bazlı odaklanma sayacı <span class=\"dot\">·</span> iPhone ve iPad",
       "hero.h1": "Odaklanmanı görünür hale getir.",
       "hero.lede": "Ders, proje ya da alışkanlık için ayrı bir çalışma alanı aç. Tek başına odaklan veya arkadaşlarınla oda kur; süren kaydolur, raporlarına işler ve uygulamadan çıksan bile Kilit Ekranı ile Dynamic Island'da devam eder.",
-      "hero.cta.soon": "Yakında App Store'da",
+      "hero.cta.soon": "App Store'da indir",
       "hero.cta.how": "Nasıl çalıştığını gör ↓",
       "hero.note": "Başlamak için hesap gerekmez. Kullanımı ücretsiz — Yonder PRO isteğe bağlıdır.",
       "timer.live": "Canlı demo",
@@ -1020,7 +1025,7 @@ footer { padding: 64px 0 40px; }
       "footer.col.yonder.faq": "SSS",
       "footer.col.contact": "İletişim",
       "footer.bottom.copyright": "© 2026 Yonder. Emir Şahin tarafından yapıldı.",
-      "footer.bottom.soon": "Yakında App Store'da",
+      "footer.bottom.soon": "App Store'da indir",
       "doc.title": "Yonder",
       "doc.description": "Yonder, iPhone ve iPad için çalışma alanı bazlı odaklanma sayacı: odalar, Canlı Etkinlik, haftalık raporlar ve isteğe bağlı senkronizasyon. Ücretsiz başla, Pro ile genişlet."
     }
