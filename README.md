@@ -50,6 +50,3 @@ Klasik bir Pomodoro/sayaç uygulaması değil. Asıl fark: kullanıcı zamanın�
 - Uzaktan çalışan / freelance çalışanlar
 - "Vücut çift çalışma" (body doubling) yöntemiyle arkadaşıyla birlikte çalışmayı seven kullanıcılar
 
-## Ekran görüntüleri
-
-Ana ekran, Rapor ve Ayarlar ekranlarının ham (işlenmemiş) görüntüleri `AppStore_Screenshots/` klasöründe. Reklam/tanıtım materyali için hazırlanan koyu temalı, başlıklı versiyonlar ayrıca üretiliyor (nanobanana ile) — ihtiyaç olursa en güncel hallerini isteyebilirsin.
