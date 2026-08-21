@@ -36,6 +36,7 @@ struct FocusPickerView: View {
     @State private var timerVM = TimerViewModel()
     @State private var showSoloTimer = false
     @State private var showWorkItemPickerSheet = false
+    @State private var conflictingActiveSession: TimerViewModel? = nil
 
     @State private var selectedWorkItem: String? = nil
     @State private var selectedTimerMode: TimerModeSelection = .duration
@@ -302,6 +303,29 @@ struct FocusPickerView: View {
         }
         .sheet(isPresented: $showWorkItemPickerSheet) {
             WorkItemPickerSheet(selectedWorkItem: $selectedWorkItem)
+        }
+        .confirmationDialog(
+            appLanguage == "tr" ? "Bitmemiş bir oturumun var" : "You have an unfinished session",
+            isPresented: Binding(
+                get: { conflictingActiveSession != nil },
+                set: { if !$0 { conflictingActiveSession = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: conflictingActiveSession
+        ) { _ in
+            Button(appLanguage == "tr" ? "Yeni oturum başlat (eskisi silinir)" : "Start new session (discard old)", role: .destructive) {
+                conflictingActiveSession = nil
+                proceedWithStartingTimer()
+            }
+            Button(appLanguage == "tr" ? "Vazgeç" : "Cancel", role: .cancel) {
+                conflictingActiveSession = nil
+            }
+        } message: { conflicting in
+            Text(
+                appLanguage == "tr"
+                ? "\(ReportMetrics.formattedTime(seconds: conflicting.displaySeconds, lang: appLanguage)) süren kaydedilmemiş bir odaklanma oturumun var. Yeni oturum başlatırsan bu kaybolur. Onu kaydetmek için önce ana sayfadan devam et."
+                : "You have an unsaved focus session with \(ReportMetrics.formattedTime(seconds: conflicting.displaySeconds, lang: appLanguage)) on it. Starting a new one will lose it. Go back to the home screen to resume and save it first."
+            )
         }
         .onAppear {
             if let initial = initialDurationSeconds, initial > 0 {
@@ -709,6 +733,19 @@ struct FocusPickerView: View {
             guard totalSeconds > 0 else { return }
         }
 
+        // Starting a new session wipes any unfinished one still on disk (setDuration/
+        // setStopwatchMode both clear ActiveTimerStateStore). Surface it first instead
+        // of silently discarding hours of unsaved solo-timer progress — this is how a
+        // background stopwatch left running for hours used to vanish with no record.
+        if let conflicting = TimerViewModel.restoreIfAvailable() {
+            conflictingActiveSession = conflicting
+            return
+        }
+
+        proceedWithStartingTimer()
+    }
+
+    private func proceedWithStartingTimer() {
         let trimmedSubject = selectedWorkItem?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 
         if !trimmedSubject.isEmpty {

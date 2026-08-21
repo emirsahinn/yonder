@@ -147,7 +147,7 @@ struct SettingsView: View {
                                             .fill(Color(red: 0.95, green: 0.78, blue: 0.35).opacity(0.12))
                                             .frame(width: 38, height: 38)
 
-                                        Image(systemName: proStore.hasPro ? "sparkles" : "lock.open")
+                                        Image(systemName: proStore.hasPro ? "sparkles" : "lock.fill")
                                             .font(.system(size: 15, weight: .semibold))
                                             .foregroundStyle(Color(red: 0.95, green: 0.78, blue: 0.35))
                                     }

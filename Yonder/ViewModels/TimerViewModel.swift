@@ -10,6 +10,13 @@ import Combine
 @Observable
 final class TimerViewModel {
 
+    /// Live Activities have no meaningful "end" in stopwatch mode, but ActivityKit
+    /// still needs a staleDate/endDate. iOS itself force-ends any Live Activity after
+    /// ~8h regardless of app code, so there's no benefit picking anything shorter here
+    /// — a smaller value (e.g. 1h) would just make the Lock Screen/Dynamic Island
+    /// freeze at 00:00 while the in-app stopwatch keeps counting up correctly underneath.
+    private static let stopwatchLiveActivityWindowSeconds = 8 * 3600
+
     // MARK: - Published State
 
     /// Total seconds remaining on the timer (countdown mode).
@@ -132,8 +139,9 @@ final class TimerViewModel {
             isRunning = true
 
             LiveActivityService.shared.startActivity(
-                totalDurationSeconds: 3600,
-                intentionNote: intentionNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : intentionNote
+                totalDurationSeconds: Self.stopwatchLiveActivityWindowSeconds,
+                intentionNote: intentionNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : intentionNote,
+                isStopwatchMode: true
             )
 
             timerCancellable = Timer.publish(every: 1.0, on: .main, in: .common)
@@ -173,12 +181,13 @@ final class TimerViewModel {
         countdownEndDate = nil
         stopwatchRunStartedAt = nil
 
-        let endDate = Date().addingTimeInterval(TimeInterval(isStopwatchMode ? 0 : remainingSeconds))
+        let endDate = Date().addingTimeInterval(TimeInterval(isStopwatchMode ? Self.stopwatchLiveActivityWindowSeconds : remainingSeconds))
         LiveActivityService.shared.updateActivity(
             endDate: endDate,
             isPaused: true,
             totalDurationSeconds: isStopwatchMode ? elapsedSeconds : totalDuration,
-            intentionNote: intentionNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : intentionNote
+            intentionNote: intentionNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : intentionNote,
+            isStopwatchMode: isStopwatchMode
         )
 
         persistActiveState()

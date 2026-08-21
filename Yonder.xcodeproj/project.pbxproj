@@ -9,12 +9,43 @@
 /* Begin PBXBuildFile section */
 		2D96F05A301358A000FDD47C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2D96F059301358A000FDD47C /* GoogleSignIn */; };
 		2D96F05C301358A000FDD47C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2D96F05B301358A000FDD47C /* GoogleSignInSwift */; };
+		2DED2E9D3033290900B55C1F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DED2E9C3033290900B55C1F /* WidgetKit.framework */; };
+		2DED2E9F3033290900B55C1F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DED2E9E3033290900B55C1F /* SwiftUI.framework */; };
+		2DED2EAC3033290A00B55C1F /* WidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2DED2E9A3033290900B55C1F /* WidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		33239DFC4013DC4A73EA38FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 64714B6C3B6B9BF35D23C3FD /* FirebaseFirestore */; };
 		C57710190A69D9E28A82F03F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7D72EEE414C14F27B4DA870D /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2DED2EAA3033290A00B55C1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D06769C30109E6400E7B47D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DED2E993033290900B55C1F;
+			remoteInfo = WidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2DED2EAD3033290A00B55C1F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2DED2EAC3033290A00B55C1F /* WidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		2D0676A430109E6400E7B47D /* Yonder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yonder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DED2E9A3033290900B55C1F /* WidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DED2E9C3033290900B55C1F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		2DED2E9E3033290900B55C1F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		2DED2EB930332B1B00B55C1F /* WidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetsExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -25,6 +56,21 @@
 			);
 			target = 2D0676A330109E6400E7B47D /* Yonder */;
 		};
+		2DED2EB13033290A00B55C1F /* Exceptions for "Widgets" folder in "WidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2DED2E993033290900B55C1F /* WidgetsExtension */;
+		};
+		2DED2EB730332A7D00B55C1F /* Exceptions for "Yonder" folder in "WidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Activity/YonderActivityAttributes.swift,
+				Services/WidgetDataService.swift,
+			);
+			target = 2DED2E993033290900B55C1F /* WidgetsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,8 +78,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				2D0676C030109E6400E7B47D /* Exceptions for "Yonder" folder in "Yonder" target */,
+				2DED2EB730332A7D00B55C1F /* Exceptions for "Yonder" folder in "WidgetsExtension" target */,
 			);
 			path = Yonder;
+			sourceTree = "<group>";
+		};
+		2DED2EA03033290900B55C1F /* Widgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2DED2EB13033290A00B55C1F /* Exceptions for "Widgets" folder in "WidgetsExtension" target */,
+			);
+			path = Widgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -50,13 +105,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DED2E973033290900B55C1F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DED2E9F3033290900B55C1F /* SwiftUI.framework in Frameworks */,
+				2DED2E9D3033290900B55C1F /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		2D06769B30109E6400E7B47D = {
 			isa = PBXGroup;
 			children = (
+				2DED2EB930332B1B00B55C1F /* WidgetsExtension.entitlements */,
 				2D0676A630109E6400E7B47D /* Yonder */,
+				2DED2EA03033290900B55C1F /* Widgets */,
+				2DED2E9B3033290900B55C1F /* Frameworks */,
 				2D0676A530109E6400E7B47D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,8 +132,18 @@
 			isa = PBXGroup;
 			children = (
 				2D0676A430109E6400E7B47D /* Yonder.app */,
+				2DED2E9A3033290900B55C1F /* WidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2DED2E9B3033290900B55C1F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2DED2E9C3033290900B55C1F /* WidgetKit.framework */,
+				2DED2E9E3033290900B55C1F /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -79,10 +156,12 @@
 				2D0676A030109E6400E7B47D /* Sources */,
 				2D0676A130109E6400E7B47D /* Frameworks */,
 				2D0676A230109E6400E7B47D /* Resources */,
+				2DED2EAD3033290A00B55C1F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2DED2EAB3033290A00B55C1F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2D0676A630109E6400E7B47D /* Yonder */,
@@ -98,6 +177,28 @@
 			productReference = 2D0676A430109E6400E7B47D /* Yonder.app */;
 			productType = "com.apple.product-type.application";
 		};
+		2DED2E993033290900B55C1F /* WidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DED2EB03033290A00B55C1F /* Build configuration list for PBXNativeTarget "WidgetsExtension" */;
+			buildPhases = (
+				2DED2E963033290900B55C1F /* Sources */,
+				2DED2E973033290900B55C1F /* Frameworks */,
+				2DED2E983033290900B55C1F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2DED2EA03033290900B55C1F /* Widgets */,
+			);
+			name = WidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = WidgetsExtension;
+			productReference = 2DED2E9A3033290900B55C1F /* WidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -109,6 +210,9 @@
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					2D0676A330109E6400E7B47D = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					2DED2E993033290900B55C1F = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -133,12 +237,20 @@
 			projectRoot = "";
 			targets = (
 				2D0676A330109E6400E7B47D /* Yonder */,
+				2DED2E993033290900B55C1F /* WidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		2D0676A230109E6400E7B47D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DED2E983033290900B55C1F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -155,7 +267,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DED2E963033290900B55C1F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2DED2EAB3033290A00B55C1F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DED2E993033290900B55C1F /* WidgetsExtension */;
+			targetProxy = 2DED2EAA3033290A00B55C1F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2D0676AD30109E6500E7B47D /* Debug */ = {
@@ -341,6 +468,68 @@
 			};
 			name = Release;
 		};
+		2DED2EAE3033290A00B55C1F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Widgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emir.Yonder.Widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2DED2EAF3033290A00B55C1F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Widgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emir.Yonder.Widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -358,6 +547,15 @@
 			buildConfigurations = (
 				2D0676B030109E6500E7B47D /* Debug */,
 				2D0676B130109E6500E7B47D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DED2EB03033290A00B55C1F /* Build configuration list for PBXNativeTarget "WidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DED2EAE3033290A00B55C1F /* Debug */,
+				2DED2EAF3033290A00B55C1F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -24,7 +24,7 @@ final class LiveActivityService {
     }
 
     /// Starts a Live Activity for an active focus session.
-    func startActivity(totalDurationSeconds: Int, intentionNote: String?, participantCount: Int? = nil, roomCode: String? = nil) {
+    func startActivity(totalDurationSeconds: Int, intentionNote: String?, participantCount: Int? = nil, roomCode: String? = nil, isStopwatchMode: Bool = false) {
         guard isLiveActivityEnabled else { return }
 
         // End any existing activity first
@@ -41,7 +41,8 @@ final class LiveActivityService {
                 totalDurationSeconds: totalDurationSeconds,
                 intentionNote: intentionNote,
                 participantCount: participantCount,
-                roomCode: roomCode
+                roomCode: roomCode,
+                isStopwatchMode: isStopwatchMode
             )
 
             do {
@@ -69,7 +70,7 @@ final class LiveActivityService {
     }
 
     /// Updates the running Live Activity state (e.g. on pause/resume or remaining time sync).
-    func updateActivity(endDate: Date, isPaused: Bool, totalDurationSeconds: Int, intentionNote: String?, participantCount: Int? = nil, roomCode: String? = nil) {
+    func updateActivity(endDate: Date, isPaused: Bool, totalDurationSeconds: Int, intentionNote: String?, participantCount: Int? = nil, roomCode: String? = nil, isStopwatchMode: Bool = false) {
         if #available(iOS 16.1, *) {
             guard let activity = currentActivity as? Activity<YonderActivityAttributes> else { return }
 
@@ -79,7 +80,8 @@ final class LiveActivityService {
                 totalDurationSeconds: totalDurationSeconds,
                 intentionNote: intentionNote,
                 participantCount: participantCount,
-                roomCode: roomCode
+                roomCode: roomCode,
+                isStopwatchMode: isStopwatchMode
             )
 
             Task {

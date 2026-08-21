@@ -16,6 +16,8 @@ public struct YonderActivityAttributes: ActivityAttributes {
         public var intentionNote: String?
         public var participantCount: Int?
         public var roomCode: String?
+        /// Open-ended count-up session (solo stopwatch) vs. a count-down toward `endDate`.
+        public var isStopwatchMode: Bool
 
         public init(
             endDate: Date,
@@ -23,7 +25,8 @@ public struct YonderActivityAttributes: ActivityAttributes {
             totalDurationSeconds: Int,
             intentionNote: String? = nil,
             participantCount: Int? = nil,
-            roomCode: String? = nil
+            roomCode: String? = nil,
+            isStopwatchMode: Bool = false
         ) {
             self.endDate = endDate
             self.isPaused = isPaused
@@ -31,6 +34,7 @@ public struct YonderActivityAttributes: ActivityAttributes {
             self.intentionNote = intentionNote
             self.participantCount = participantCount
             self.roomCode = roomCode
+            self.isStopwatchMode = isStopwatchMode
         }
     }
 

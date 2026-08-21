@@ -7,6 +7,7 @@ import SwiftUI
 import WidgetKit
 import ActivityKit
 
+@main
 struct YonderWidgetBundle: WidgetBundle {
     var body: some Widget {
         YonderLiveActivityWidget()
@@ -45,6 +46,11 @@ struct YonderLiveActivityWidget: Widget {
                         Text(String(localized: "paused_tag", defaultValue: "Duraklatıldı"))
                             .font(.system(size: 13, weight: .medium, design: .rounded))
                             .foregroundStyle(Color(white: 0.5))
+                    } else if context.state.isStopwatchMode {
+                        Text(timerInterval: context.attributes.sessionStartDate...context.state.endDate, countsDown: false)
+                            .font(.system(size: 16, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.white)
+                            .multilineTextAlignment(.trailing)
                     } else {
                         Text(timerInterval: Date()...context.state.endDate, countsDown: true)
                             .font(.system(size: 16, weight: .bold, design: .monospaced))
@@ -87,6 +93,11 @@ struct YonderLiveActivityWidget: Widget {
                     Text("II")
                         .font(.system(size: 11, weight: .bold, design: .monospaced))
                         .foregroundStyle(Color(white: 0.5))
+                } else if context.state.isStopwatchMode {
+                    Text(timerInterval: context.attributes.sessionStartDate...context.state.endDate, countsDown: false)
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .frame(width: 42)
                 } else {
                     Text(timerInterval: Date()...context.state.endDate, countsDown: true)
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
@@ -144,6 +155,10 @@ struct YonderLiveActivityWidget: Widget {
                 Text(String(localized: "paused_tag", defaultValue: "Duraklatıldı"))
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(white: 0.5))
+            } else if context.state.isStopwatchMode {
+                Text(timerInterval: context.attributes.sessionStartDate...context.state.endDate, countsDown: false)
+                    .font(.system(size: 22, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
             } else {
                 Text(timerInterval: Date()...context.state.endDate, countsDown: true)
                     .font(.system(size: 22, weight: .bold, design: .monospaced))
