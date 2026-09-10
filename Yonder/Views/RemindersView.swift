@@ -24,6 +24,7 @@ struct RemindersView: View {
     @State private var reminderToEdit: FocusReminder? = nil
     @State private var reminderToDelete: FocusReminder? = nil
     @State private var showNotificationSettingsPrompt: Bool = false
+    @State private var showProPaywall: Bool = false
 
     @Environment(\.horizontalSizeClass) private var hSizeClass
     private var isIPad: Bool { hSizeClass == .regular }
@@ -120,6 +121,12 @@ struct RemindersView: View {
         .sheet(item: $reminderToEdit) { reminder in
             AddEditReminderSheet(reminder: reminder, savedSubjects: savedSubjects.filter { !$0.isArchived }, allReminders: activeReminders)
         }
+        .sheet(isPresented: $showProPaywall) {
+            YonderPaywallSheetView {
+                isPremiumUser = true
+                showProPaywall = false
+            }
+        }
         .confirmationDialog(
             appLanguage == "tr" ? "Hatırlatıcıyı Sil" : "Delete Reminder",
             isPresented: Binding(
@@ -186,6 +193,12 @@ struct RemindersView: View {
     }
 
     private func beginAddReminderFlow() {
+        guard isPremiumUser else {
+            HapticService.warning()
+            showProPaywall = true
+            return
+        }
+
         Task {
             let allowed = await ensureNotificationPermissionForReminder()
             await MainActor.run {
@@ -297,15 +310,17 @@ struct RemindersView: View {
                     beginAddReminderFlow()
                 } label: {
                     HStack(spacing: 6) {
-                        Image(systemName: "plus.circle.fill")
+                        Image(systemName: isPremiumUser ? "plus.circle.fill" : "lock.fill")
                             .font(.system(size: 13, weight: .semibold))
-                        Text(appLanguage == "tr" ? "Hatırlatıcı Ekle" : "Add Reminder")
+                        Text(isPremiumUser
+                             ? (appLanguage == "tr" ? "Hatırlatıcı Ekle" : "Add Reminder")
+                             : (appLanguage == "tr" ? "PRO ile Ekle" : "Add with PRO"))
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                     }
                     .foregroundStyle(.black)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Capsule().fill(Color.white))
+                    .background(Capsule().fill(isPremiumUser ? Color.white : Color(red: 0.95, green: 0.78, blue: 0.35)))
                 }
                 .buttonStyle(.plain)
             }
@@ -333,7 +348,9 @@ struct RemindersView: View {
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .foregroundStyle(Color(white: 0.75))
 
-            Text(appLanguage == "tr" ? "Günün içinde ritmine dönmek için ilk hatırlatıcını ekle." : "Add your first reminder to return to your rhythm during the day.")
+            Text(isPremiumUser
+                 ? (appLanguage == "tr" ? "Günün içinde ritmine dönmek için ilk hatırlatıcını ekle." : "Add your first reminder to return to your rhythm during the day.")
+                 : (appLanguage == "tr" ? "Hatırlatıcılar Yonder PRO ile açılır." : "Reminders unlock with Yonder PRO."))
                 .font(.system(size: 12, design: .rounded))
                 .foregroundStyle(Color(white: 0.45))
                 .multilineTextAlignment(.center)
@@ -377,7 +394,8 @@ struct RemindersView: View {
                 reminderToDelete = reminder
             },
             onPaywallPrompt: {
-                // v1: no paywall for reminders
+                HapticService.warning()
+                showProPaywall = true
             }
         )
     }

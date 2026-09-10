@@ -266,8 +266,8 @@ struct WorkItemManagementView: View {
                         .foregroundStyle(Color(red: 0.95, green: 0.78, blue: 0.35))
 
                     Text(appLanguage == "tr"
-                         ? "Ücretsiz planda en fazla 10 çalışma ekleyebilirsin. Daha fazlası için Yonder PRO."
-                         : "The free plan supports up to 10 work areas. Unlock Yonder PRO for more.")
+                         ? "Ücretsiz planda en fazla 5 çalışma ekleyebilirsin. Daha fazlası için Yonder PRO."
+                         : "The free plan supports up to 5 work areas. Unlock Yonder PRO for more.")
                         .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(Color(white: 0.85))
                         .lineLimit(2)
@@ -320,8 +320,8 @@ struct WorkItemManagementView: View {
 
         if WorkItemLimits.isLimitReached(currentCount: activeSubjects.count, isPremiumUser: isPremiumUser) {
             addErrorText = appLanguage == "tr"
-                ? "Ücretsiz planda en fazla 10 çalışma ekleyebilirsin. Daha fazlası için Yonder PRO."
-                : "The free plan supports up to 10 work areas. Unlock Yonder PRO for more."
+                ? "Ücretsiz planda en fazla 5 çalışma ekleyebilirsin. Daha fazlası için Yonder PRO."
+                : "The free plan supports up to 5 work areas. Unlock Yonder PRO for more."
             showPaywallSheet = true
             HapticService.warning()
             return
@@ -511,9 +511,9 @@ struct WorkItemManagementView: View {
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(Color(white: 0.6))
 
-            Text(appLanguage == "tr" ? "İlk oturumundan sonra çalışma alanların burada görünmeye başlayacak." : "Your work areas will start appearing here after your first session.")
+            Text(appLanguage == "tr" ? "Matematik, tez, İngilizce ya da proje gibi takip etmek istediğin ilk alanı ekle." : "Add your first area, such as Math, thesis, language study, or a project.")
                 .font(.system(size: 12, design: .rounded))
-                .foregroundStyle(Color(white: 0.4))
+                .foregroundStyle(Color(white: 0.48))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 

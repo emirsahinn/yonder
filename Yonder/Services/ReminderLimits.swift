@@ -6,36 +6,37 @@
 import Foundation
 
 /// Central definition for reminder limit rules.
-/// v1 launch: all limits removed — all users get unlimited reminders and repeat days.
-/// Keep the enum and function signatures intact for easy re-introduction later.
+/// Reminders are a Pro-only feature — free users can't enable or schedule any.
 enum ReminderLimits {
-    /// v1: unlimited for all users.
-    static let freeActiveReminderLimit: Int = Int.max
-    /// v1: unlimited for all users.
-    static let freeRepeatDayLimit: Int = Int.max
+    /// Free users get no active reminders.
+    static let freeActiveReminderLimit: Int = 0
+    /// Free users get no repeat days scheduled.
+    static let freeRepeatDayLimit: Int = 0
 
-    /// Returns all non-expired reminder IDs as active (no Pro gate).
+    /// Returns non-expired reminder IDs as active, but only for Pro users.
     static func activeReminderIDs(from reminders: [FocusReminder], isPremiumUser: Bool) -> Set<UUID> {
-        Set(reminders.filter { !$0.isExpired }.map { $0.id })
+        guard isPremiumUser else { return [] }
+        return Set(reminders.filter { !$0.isExpired }.map { $0.id })
     }
 
-    /// v1: reminders are never locked.
+    /// Reminders require Pro; every reminder is locked for a free user.
     static func isReminderLocked(_ reminder: FocusReminder, allReminders: [FocusReminder], isPremiumUser: Bool) -> Bool {
-        return false
+        return !isPremiumUser
     }
 
-    /// v1: always allowed to enable another reminder.
+    /// Only Pro users can enable another reminder.
     static func canEnableAnotherReminder(allReminders: [FocusReminder], isPremiumUser: Bool) -> Bool {
-        return true
+        return isPremiumUser
     }
 
-    /// Returns all selected repeat days without any plan restriction.
+    /// Returns the selected repeat days for Pro users; none for free users.
     static func effectiveRepeatDays(for reminder: FocusReminder, isPremiumUser: Bool) -> [Int] {
-        Array(Set(reminder.repeatDays)).sorted()
+        guard isPremiumUser else { return [] }
+        return Array(Set(reminder.repeatDays)).sorted()
     }
 
-    /// v1: any day set is allowed.
+    /// Only Pro users can use any repeat day configuration.
     static func canUseRepeatDays(_ days: Set<Int>, isPremiumUser: Bool) -> Bool {
-        return true
+        return isPremiumUser
     }
 }

@@ -143,6 +143,12 @@ struct YonderPaywallSheetView: View {
     private var benefitsCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             benefitRow(
+                icon: "square.stack.3d.up",
+                title: isTurkish ? "Sınırsız çalışma alanı" : "Unlimited work areas",
+                subtitle: isTurkish ? "Ücretsiz planın 5 alan sınırını kaldır." : "Remove the free plan's 5-area limit."
+            )
+
+            benefitRow(
                 icon: "target",
                 title: isTurkish ? "Günlük, haftalık, aylık hedefler" : "Daily, weekly, monthly goals",
                 subtitle: isTurkish ? "Genel ve çalışma bazlı hedeflerini ayrıntılı takip et." : "Track general and work-based goals in detail."
@@ -158,6 +164,12 @@ struct YonderPaywallSheetView: View {
                 icon: "nosign",
                 title: isTurkish ? "Reklamsız odaklanma" : "Ad-free focus",
                 subtitle: isTurkish ? "Oturum sonunda araya giren reklamlar olmadan devam et." : "Continue without ads at the end of sessions."
+            )
+
+            benefitRow(
+                icon: "bell.badge.fill",
+                title: isTurkish ? "Hatırlatıcılar" : "Reminders",
+                subtitle: isTurkish ? "Günün içinde ritmine dönmen için zamanlanmış bildirimler." : "Scheduled notifications that bring you back to your rhythm."
             )
 
         }

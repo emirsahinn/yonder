@@ -10,14 +10,14 @@ Bu build'in amacı ödeme altyapısı tamamlanmadan uygulamanın genel stabilite
 - Sayaç / kronometre
 - Kaydet ekranı
 - Çalışmalarım ekleme, silme, yeniden adlandırma
-- 10 çalışma limiti ve PRO kilit davranışı
+- 5 çalışma limiti ve PRO kilit davranışı
 - Rapor ekranı temel metrikleri
 - Hedefler ekranı kilit/paywall davranışı
 - Hatırlatıcılar ve bildirim izni
 - Saat görünümleri ve PRO kilitleri
 - Yatay/dikey geçişler
 - Tam ekran saatten çıkış
-- Online oda oluşturma, katılma, ayrılma, oda bitirme
+- Odak odası oluşturma, katılma, ayrılma, oda bitirme
 - Google giriş ve cihazlar arası sync
 - Profil fotoğrafı seçici
 - Live Activity / Dynamic Island davranışı

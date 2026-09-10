@@ -8,7 +8,7 @@ import Foundation
 /// Central definition for work item (subject) limit rules.
 enum WorkItemLimits {
     /// Maximum number of active work areas a free user can use.
-    static let freeWorkItemLimit: Int = 10
+    static let freeWorkItemLimit: Int = 5
 
     /// Returns `true` if a non-premium user has reached or exceeded the free work item limit for creating new items.
     static func isLimitReached(currentCount: Int, isPremiumUser: Bool) -> Bool {

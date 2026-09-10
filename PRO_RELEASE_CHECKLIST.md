@@ -21,9 +21,9 @@ Bu ID'ler App Store Connect'te birebir aynı yazılmalı. Harf, nokta ve büyük
 
 | Özellik | Free | PRO |
 | --- | --- | --- |
-| Çalışma alanı sayısı | 10 aktif çalışma | Sınırsız |
+| Çalışma alanı sayısı | 5 aktif çalışma | Sınırsız |
 | Hedefler | Kilitli | Genel + çalışma bazlı hedefler |
-| Hatırlatıcılar | 1 aktif hatırlatıcı | Daha fazla aktif hatırlatıcı |
+| Hatırlatıcılar | Kilitli | Sınırsız aktif hatırlatıcı |
 | Saat görünümleri | Flip Clock | Tüm PRO saat stilleri |
 
 Kilit mantığı hâlâ merkezi `is_premium_user` değeriyle çalışır. Bu değer artık `ProStore` tarafından StoreKit entitlement durumuna göre güncellenir.
