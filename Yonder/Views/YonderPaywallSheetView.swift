@@ -6,7 +6,7 @@
 import StoreKit
 import SwiftUI
 
-/// Yonder PRO paywall — unlocks daily/weekly/monthly goal tracking.
+/// Yonder PRO paywall — unlocks the full focus workflow.
 struct YonderPaywallSheetView: View {
 
     @AppStorage("app_language") private var appLanguage: String = "en"
@@ -122,14 +122,14 @@ struct YonderPaywallSheetView: View {
             }
 
             VStack(spacing: 8) {
-                Text(isTurkish ? "Hedeflerini planla." : "Plan your goals.")
+                Text(isTurkish ? "Ritmini kesintisiz tut." : "Keep your rhythm uninterrupted.")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(white: 0.96))
                     .multilineTextAlignment(.center)
 
                 Text(isTurkish
-                     ? "Yonder PRO ile günlük, haftalık ve aylık hedeflerini takip et."
-                     : "Track daily, weekly, and monthly goals with Yonder PRO.")
+                     ? "Sınırsız çalışma alanı, hedefler, hatırlatıcılar ve reklamsız odaklanma tek yerde."
+                     : "Unlimited work areas, goals, reminders, and ad-free focus in one place.")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(white: 0.58))
                     .multilineTextAlignment(.center)
@@ -143,6 +143,12 @@ struct YonderPaywallSheetView: View {
     private var benefitsCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             benefitRow(
+                icon: "nosign",
+                title: isTurkish ? "Reklamsız odaklanma" : "Ad-free focus",
+                subtitle: isTurkish ? "Oturum sonunda araya giren reklamlar olmadan devam et." : "Continue without ads at the end of sessions."
+            )
+
+            benefitRow(
                 icon: "square.stack.3d.up",
                 title: isTurkish ? "Sınırsız çalışma alanı" : "Unlimited work areas",
                 subtitle: isTurkish ? "Ücretsiz planın 5 alan sınırını kaldır." : "Remove the free plan's 5-area limit."
@@ -155,21 +161,15 @@ struct YonderPaywallSheetView: View {
             )
 
             benefitRow(
-                icon: "chart.line.uptrend.xyaxis",
-                title: isTurkish ? "Gelişmiş hedef takibi" : "Advanced goal tracking",
-                subtitle: isTurkish ? "Hedef ilerlemeni raporlarında daha net gör." : "See your goal progress more clearly in reports."
-            )
-
-            benefitRow(
-                icon: "nosign",
-                title: isTurkish ? "Reklamsız odaklanma" : "Ad-free focus",
-                subtitle: isTurkish ? "Oturum sonunda araya giren reklamlar olmadan devam et." : "Continue without ads at the end of sessions."
-            )
-
-            benefitRow(
                 icon: "bell.badge.fill",
                 title: isTurkish ? "Hatırlatıcılar" : "Reminders",
                 subtitle: isTurkish ? "Günün içinde ritmine dönmen için zamanlanmış bildirimler." : "Scheduled notifications that bring you back to your rhythm."
+            )
+
+            benefitRow(
+                icon: "chart.line.uptrend.xyaxis",
+                title: isTurkish ? "Gelişmiş hedef takibi" : "Advanced goal tracking",
+                subtitle: isTurkish ? "Hedef ilerlemeni raporlarında daha net gör." : "See your goal progress more clearly in reports."
             )
 
         }

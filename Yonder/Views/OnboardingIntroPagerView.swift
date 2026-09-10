@@ -443,50 +443,49 @@ private struct IntroPage1: View {
 
 private struct IntroPage2: View {
     let metrics: IntroMetrics
+    @AppStorage("app_language") private var appLanguage: String = "en"
     @State private var appear: Bool = false
-    @State private var handAngle: Double = -90
+    @State private var barsFilled: Bool = false
     private var accent: Color { onboardingAccentColors[1] }
+
+    private var previewItems: [(name: String, duration: String, progress: CGFloat)] {
+        if appLanguage == "tr" {
+            return [
+                ("Matematik", "2s 10dk", 0.82),
+                ("Tez", "1s 25dk", 0.58),
+                ("İngilizce", "45dk", 0.34)
+            ]
+        }
+
+        return [
+            ("Math", "2h 10m", 0.82),
+            ("Thesis", "1h 25m", 0.58),
+            ("English", "45m", 0.34)
+        ]
+    }
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
                 Spacer(minLength: metrics.topChromeReserve)
 
-                ZStack {
-                    Circle()
-                        .stroke(Color(white: 0.2), lineWidth: 1)
-                        .frame(width: 150, height: 150)
-
-                    ForEach(0..<12, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(i % 3 == 0 ? accent.opacity(0.85) : Color(white: 0.3))
-                            .frame(width: 1.5, height: i % 3 == 0 ? 8 : 4)
-                            .offset(y: -67)
-                            .rotationEffect(.degrees(Double(i) * 30))
+                VStack(spacing: metrics.isRegularWidth ? 12 : 9) {
+                    ForEach(Array(previewItems.enumerated()), id: \.offset) { index, item in
+                        IntroWorkAreaRow(
+                            name: item.name,
+                            duration: item.duration,
+                            progress: barsFilled ? item.progress : 0.06,
+                            accent: accent,
+                            index: index,
+                            isRegularWidth: metrics.isRegularWidth
+                        )
                     }
-
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color(white: 0.8))
-                        .frame(width: 2, height: 48)
-                        .offset(y: -24)
-                        .rotationEffect(.degrees(0))
-
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(accent)
-                        .frame(width: 2.5, height: 32)
-                        .offset(y: -16)
-                        .rotationEffect(.degrees(handAngle))
-                        .shadow(color: accent.opacity(0.5), radius: 3)
-
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 7, height: 7)
                 }
-                .frame(width: 170, height: 170)
+                .frame(width: metrics.isRegularWidth ? 380 : min(metrics.contentMaxWidth, 300))
                 .scaleEffect(metrics.illustrationScale(regular: 1.32))
                 .frame(
-                    width: 170 * metrics.illustrationScale(regular: 1.32),
-                    height: 170 * metrics.illustrationScale(regular: 1.32)
+                    width: (metrics.isRegularWidth ? 380 : min(metrics.contentMaxWidth, 300)) * metrics.illustrationScale(regular: 1.32),
+                    height: (metrics.isRegularWidth ? 210 : 168) * metrics.illustrationScale(regular: 1.32)
                 )
                 .opacity(appear ? 1 : 0)
                 .scaleEffect(appear ? 1 : 0.9)
@@ -514,10 +513,72 @@ private struct IntroPage2: View {
             withAnimation(.easeOut(duration: 0.55)) {
                 appear = true
             }
-            withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
-                handAngle = 60
+            withAnimation(.easeOut(duration: 0.9).delay(0.25)) {
+                barsFilled = true
             }
         }
+    }
+}
+
+private struct IntroWorkAreaRow: View {
+    let name: String
+    let duration: String
+    let progress: CGFloat
+    let accent: Color
+    let index: Int
+    let isRegularWidth: Bool
+
+    var body: some View {
+        HStack(spacing: isRegularWidth ? 12 : 10) {
+            ZStack {
+                Circle()
+                    .fill(accent.opacity(0.16))
+
+                Text(String(name.prefix(1)))
+                    .font(.system(size: isRegularWidth ? 16 : 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(accent)
+            }
+            .frame(width: isRegularWidth ? 38 : 32, height: isRegularWidth ? 38 : 32)
+
+            VStack(alignment: .leading, spacing: isRegularWidth ? 8 : 6) {
+                HStack {
+                    Text(name)
+                        .font(.system(size: isRegularWidth ? 16 : 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(white: 0.92))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+
+                    Spacer(minLength: 8)
+
+                    Text(duration)
+                        .font(.system(size: isRegularWidth ? 13 : 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.52))
+                        .lineLimit(1)
+                }
+
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.white.opacity(0.10))
+
+                        Capsule()
+                            .fill(accent.opacity(0.78))
+                            .frame(width: max(10, geometry.size.width * min(progress, 1)))
+                    }
+                }
+                .frame(height: isRegularWidth ? 6 : 5)
+            }
+        }
+        .padding(.horizontal, isRegularWidth ? 14 : 12)
+        .frame(height: isRegularWidth ? 62 : 50)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.white.opacity(0.07))
+                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.white.opacity(0.10), lineWidth: 1))
+        )
+        .offset(y: progress > 0.1 ? 0 : 8)
+        .opacity(progress > 0.1 ? 1 : 0.72)
+        .animation(.easeOut(duration: 0.55).delay(Double(index) * 0.08), value: progress)
     }
 }
 

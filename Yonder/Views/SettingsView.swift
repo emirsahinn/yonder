@@ -160,7 +160,7 @@ struct SettingsView: View {
 
                                         Text(proStore.hasPro
                                              ? (selectedLanguage == "tr" ? "Apple hesabındaki aboneliği yönet." : "Manage the subscription on your Apple account.")
-                                             : (selectedLanguage == "tr" ? "Reklamları kaldır, sınırsız alan ve hedefler." : "Remove ads, unlimited work areas and goals."))
+                                             : (selectedLanguage == "tr" ? "Sınırsız alan, hedefler, hatırlatıcılar ve reklamsız deneyim." : "Unlimited areas, goals, reminders, and ad-free focus."))
                                             .font(.system(size: 11, design: .rounded))
                                             .foregroundStyle(Color(white: 0.45))
                                     }

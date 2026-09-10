@@ -345,7 +345,16 @@ struct TodayView: View {
                             }
                         }
 
-                        Spacer(minLength: isLandscape ? 16 : (layout.isWide ? 36 : 28))
+                        VStack(spacing: 8) {
+                            miniMetricsBar(layout: layout)
+
+                            if !dailyInsightText.isEmpty {
+                                dailyInsightRow(layout: layout)
+                            }
+                        }
+                        .padding(.top, isLandscape ? 14 : (layout.isWide ? 28 : 22))
+
+                        Spacer(minLength: isLandscape ? 12 : (layout.isWide ? 26 : 20))
 
                         // ── 3. Günlük Hedef ─────────────────────────────
                         VStack(spacing: 10) {
@@ -764,7 +773,7 @@ struct TodayView: View {
 
     // MARK: - Daily Mini Insight Row
 
-    private var dailyInsightRow: some View {
+    private func dailyInsightRow(layout: YonderLayout) -> some View {
         HStack(spacing: 6) {
             Image(systemName: "sparkles")
                 .font(.system(size: 11, weight: .medium))
@@ -782,6 +791,7 @@ struct TodayView: View {
                 .fill(Color(white: 0.05))
                 .overlay(Capsule().strokeBorder(Color(white: 0.12), lineWidth: 0.5))
         )
+        .frame(maxWidth: layout.secondaryMaxWidth)
     }
 }
 
