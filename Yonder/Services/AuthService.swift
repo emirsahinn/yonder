@@ -355,6 +355,7 @@ final class AuthService {
             googlePhotoURL = nil
             updateAvatarImageData(nil)
             Task { @MainActor in
+                SessionRealtimeSyncService.shared.stop()
                 SubjectRealtimeSyncService.shared.stop()
             }
             ensureSignedIn()

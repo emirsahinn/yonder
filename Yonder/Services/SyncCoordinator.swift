@@ -61,32 +61,24 @@ final class SyncCoordinator {
         let uid = user.uid
         print("[SyncCoordinator] 🔄 Starting full sync for uid: \(uid), uploadLocalChanges: \(uploadLocalChanges)")
 
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask {
-                await SyncService.shared.syncDownSessions(
-                    uid: uid,
-                    modelContext: modelContext,
-                    uploadLocalChanges: uploadLocalChanges,
-                    pruneLocalOnly: !uploadLocalChanges
-                )
-            }
-            group.addTask {
-                await SyncService.shared.syncDownSubjects(
-                    uid: uid,
-                    modelContext: modelContext,
-                    uploadLocalChanges: uploadLocalChanges,
-                    pruneLocalOnly: !uploadLocalChanges
-                )
-            }
-            group.addTask {
-                await SyncService.shared.syncDownGoals(
-                    uid: uid,
-                    goalStore: goalStore,
-                    uploadLocalChanges: uploadLocalChanges,
-                    replaceLocalWithRemote: !uploadLocalChanges
-                )
-            }
-        }
+        await SyncService.shared.syncDownSessions(
+            uid: uid,
+            modelContext: modelContext,
+            uploadLocalChanges: uploadLocalChanges,
+            pruneLocalOnly: !uploadLocalChanges
+        )
+        await SyncService.shared.syncDownSubjects(
+            uid: uid,
+            modelContext: modelContext,
+            uploadLocalChanges: uploadLocalChanges,
+            pruneLocalOnly: !uploadLocalChanges
+        )
+        await SyncService.shared.syncDownGoals(
+            uid: uid,
+            goalStore: goalStore,
+            uploadLocalChanges: uploadLocalChanges,
+            replaceLocalWithRemote: !uploadLocalChanges
+        )
 
         print("[SyncCoordinator] ✅ Full sync complete.")
     }

@@ -101,6 +101,7 @@ final class SyncService {
     /// - Remote ID missing locally → insert
     /// - Remote ID exists locally → update mutable fields
     /// - Local ID missing remotely → upload (backfill)
+    @MainActor
     func syncDownSessions(
         uid: String,
         modelContext: ModelContext,
@@ -203,6 +204,7 @@ final class SyncService {
 
     /// Downloads all subjects from Firestore and merges into SwiftData.
     /// Merge key: name (case-insensitive). Tie-breaker: lastUsedDate.
+    @MainActor
     func syncDownSubjects(
         uid: String,
         modelContext: ModelContext,
@@ -317,6 +319,7 @@ final class SyncService {
     /// Downloads all goals from Firestore and merges them into WorkGoalStore.
     /// Primary key: id. Tie-breaker: updatedAt.
     /// Duplicate guard: scope + period + mode + workAreaName — no duplication.
+    @MainActor
     func syncDownGoals(
         uid: String,
         goalStore: WorkGoalStore,
@@ -418,7 +421,7 @@ final class SyncService {
             let idStr = data["id"] as? String,
             let id = UUID(uuidString: idStr),
             let dateTs = data["date"] as? Timestamp,
-            let durationSeconds = data["durationSeconds"] as? Int,
+            let durationSeconds = intValue(data["durationSeconds"]),
             let completed = data["completed"] as? Bool
         else { return nil }
 
@@ -428,7 +431,7 @@ final class SyncService {
         let roomId = data["roomId"] as? String
         let startedAt = (data["startedAt"] as? Timestamp)?.dateValue()
         let endedAt = (data["endedAt"] as? Timestamp)?.dateValue()
-        let plannedDurationSeconds = data["plannedDurationSeconds"] as? Int
+        let plannedDurationSeconds = intValue(data["plannedDurationSeconds"])
 
         return FocusSession(
             id: id,
@@ -449,7 +452,7 @@ final class SyncService {
         if let dateTs = data["date"] as? Timestamp {
             local.date = dateTs.dateValue()
         }
-        if let duration = data["durationSeconds"] as? Int {
+        if let duration = intValue(data["durationSeconds"]) {
             local.durationSeconds = duration
         }
         if let completed = data["completed"] as? Bool {
@@ -467,7 +470,7 @@ final class SyncService {
         if let endedAt = (data["endedAt"] as? Timestamp)?.dateValue() {
             local.endedAt = endedAt
         }
-        if let planned = data["plannedDurationSeconds"] as? Int {
+        if let planned = intValue(data["plannedDurationSeconds"]) {
             local.plannedDurationSeconds = planned
         }
         if let mode = data["mode"] as? String {
@@ -504,7 +507,7 @@ final class SyncService {
             let period = WorkGoalPeriod(rawValue: periodStr),
             let modeStr = data["mode"] as? String,
             let mode = WorkGoalMode(rawValue: modeStr),
-            let targetSeconds = data["targetSeconds"] as? Int
+            let targetSeconds = intValue(data["targetSeconds"])
         else { return nil }
 
         let isEnabled = data["isEnabled"] as? Bool ?? true
@@ -527,5 +530,21 @@ final class SyncService {
             createdAt: createdAt,
             updatedAt: updatedAt
         )
+    }
+
+    private func intValue(_ value: Any?) -> Int? {
+        if let int = value as? Int {
+            return int
+        }
+        if let int64 = value as? Int64 {
+            return Int(int64)
+        }
+        if let double = value as? Double {
+            return Int(double)
+        }
+        if let number = value as? NSNumber {
+            return number.intValue
+        }
+        return nil
     }
 }

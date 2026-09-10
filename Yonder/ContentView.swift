@@ -60,8 +60,10 @@ struct ContentView: View {
 
     private func manageRealtimeSync() {
         if authService.isCloudAccountLinked, let uid = authService.currentUserId {
+            SessionRealtimeSyncService.shared.start(uid: uid, modelContext: modelContext)
             SubjectRealtimeSyncService.shared.start(uid: uid, modelContext: modelContext)
         } else {
+            SessionRealtimeSyncService.shared.stop()
             SubjectRealtimeSyncService.shared.stop()
         }
     }
@@ -72,6 +74,9 @@ struct ContentView: View {
     /// they are never synced to Firestore, so clearing them here would be a
     /// real, unrecoverable data loss rather than just clearing a re-downloadable cache.
     private func clearLocalCacheAfterSignOut() {
+        SessionRealtimeSyncService.shared.stop()
+        SubjectRealtimeSyncService.shared.stop()
+
         if let sessions = try? modelContext.fetch(FetchDescriptor<FocusSession>()) {
             for session in sessions {
                 modelContext.delete(session)
