@@ -80,7 +80,7 @@ struct YonderApp: App {
         FirebaseApp.configure()
         // Relay Firebase's already-parsed CLIENT_ID to the GoogleSignIn SDK.
         // Must happen before any GIDSignIn.sharedInstance.signIn() call.
-        if let clientID = FirebaseApp.app()?.options.clientID {
+        if let clientID = FirebaseApp.app()?.options.clientID { 
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
         }
         _authService = State(initialValue: AuthService.shared)

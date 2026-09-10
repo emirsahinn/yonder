@@ -14,7 +14,6 @@
 		2DED2E9F3033290900B55C1F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DED2E9E3033290900B55C1F /* SwiftUI.framework */; };
 		2DED2EAC3033290A00B55C1F /* WidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2DED2E9A3033290900B55C1F /* WidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		33239DFC4013DC4A73EA38FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 64714B6C3B6B9BF35D23C3FD /* FirebaseFirestore */; };
-		B59EB138715B275A1DC9E77F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A32AE7F43CDC3E4D3703C200 /* GoogleService-Info.plist */; };
 		C045B6EF2890902E9DFBB57C /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 2CC5426A00AC99ED8D7262B8 /* GoogleMobileAds */; };
 		C57710190A69D9E28A82F03F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7D72EEE414C14F27B4DA870D /* FirebaseAuth */; };
 		CF5B555C717110951674C504 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 56CF49C811F6C4BA09ED52D4 /* FirebaseCrashlytics */; };
@@ -253,7 +252,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B59EB138715B275A1DC9E77F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +266,7 @@
 
 /* Begin PBXShellScriptBuildPhase section */
 		54AD83B1E858AEDA8EBFDB3C /* ShellScript */ = {
+			alwaysOutOfDate = 1;
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
