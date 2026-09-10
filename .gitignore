@@ -29,6 +29,10 @@ Pods/
 .firebase/
 GoogleService-Info.plist
 Yonder/GoogleService-Info.plist
+scripts/**/node_modules/
+scripts/**/*serviceAccount*.json
+scripts/**/*service-account*.json
+scripts/**/*.key.json
 
 # AI coding tool state (local, not app code)
 .agents/

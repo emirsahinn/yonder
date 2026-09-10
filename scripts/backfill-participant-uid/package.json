@@ -1,0 +1,13 @@
+{
+  "name": "backfill-participant-uid",
+  "private": true,
+  "version": "1.0.0",
+  "description": "One-time backfill: writes a `uid` field onto rooms/{code}/participants/{uid} documents that predate it, so AccountDeletionService can find them by field query.",
+  "main": "backfill.js",
+  "scripts": {
+    "backfill": "node backfill.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
