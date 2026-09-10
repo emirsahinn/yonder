@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Yonder</title>
+<meta name="description" content="Yonder's privacy policy: what information the app uses, how it's stored, and how to delete it.">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  @font-face {
+    font-family: "Fraunces";
+    src: local("Fraunces");
+    font-weight: 600;
+  }
+  :root {
+    --bg: #0a0a0a;
+    --bg-raised: #141412;
+    --ink: #f4f2ee;
+    --ink-dim: #9c988f;
+    --ink-faint: #66625a;
+    --hairline: rgba(244,242,238,0.11);
+    --hairline-strong: rgba(244,242,238,0.22);
+    --serif: "Fraunces", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    margin: 0;
+    line-height: 1.6;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  a.back {
+    display: inline-block;
+    margin-bottom: 40px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-decoration: none;
+  }
+  a.back:hover { color: var(--ink); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 34px;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .updated {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 19px;
+    margin: 40px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  p { color: var(--ink-dim); margin: 0 0 14px; max-width: none; }
+  ul { margin: 0 0 14px; padding-left: 20px; color: var(--ink-dim); }
+  li { margin-bottom: 6px; }
+  strong { color: var(--ink); font-weight: 600; }
+  a { color: var(--ink); }
+  a:hover { color: var(--ink-dim); }
+  hr {
+    border: none;
+    border-top: 1px solid var(--hairline);
+    margin: 48px 0;
+  }
+  .contact {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← Yonder</a>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: August 27, 2026</p>
+
+  <p>Yonder is a focus and work tracking app. This policy explains what information Yonder uses and why.</p>
+
+  <h2>Information We Collect</h2>
+  <p>Yonder may store:</p>
+  <ul>
+    <li>Focus session duration, date, start time, end time, and selected work area.</li>
+    <li>Work areas created by the user.</li>
+    <li>Goal and reminder preferences.</li>
+    <li>Profile name, profile image, and Google email if the user connects a Google account.</li>
+    <li>Online room participation details such as room code, display name, status, duration, and timestamps.</li>
+  </ul>
+
+  <h2>How We Use Information</h2>
+  <p>We use this information to:</p>
+  <ul>
+    <li>Track focus history and reports.</li>
+    <li>Sync work areas, goals, sessions, and rooms across devices when a Google account is connected.</li>
+    <li>Show reminders and weekly summaries.</li>
+    <li>Support online focus rooms.</li>
+    <li>Unlock and manage Yonder PRO features through Apple in-app purchases.</li>
+    <li>Show ads to free users after focus sessions and offer ad-free use with Yonder PRO.</li>
+  </ul>
+
+  <h2>Account Sync</h2>
+  <p>Yonder can be used locally. If the user connects a Google account, selected app data may be synced with Firebase services so it can appear on other devices signed into the same account.</p>
+
+  <h2>Payments</h2>
+  <p>Yonder PRO purchases are processed by Apple through the App Store. Yonder does not receive or store full payment card details.</p>
+
+  <h2>Advertising</h2>
+  <p>Yonder may show ads to free users through Google AdMob after focus sessions, including solo timers, stopwatches, and online focus rooms. Google AdMob may process device, advertising, usage, diagnostic, and approximate location information to provide, measure, and improve ads, depending on the user's consent choices, region, and iOS privacy settings. Yonder PRO removes these in-app ads.</p>
+
+  <h2>Notifications</h2>
+  <p>Yonder may send local notifications for reminders and weekly summaries if the user grants notification permission. Notification settings can be changed in iOS Settings.</p>
+
+  <h2>Photos</h2>
+  <p>If the user selects a profile photo, Yonder uses the iOS photo picker. The selected image may be stored locally and synced if account sync is enabled.</p>
+
+  <h2>Data Sharing</h2>
+  <p>Yonder does not sell user data. Yonder uses Google AdMob for ads in the free experience, and Google may process information as described in Google's privacy terms and the user's consent choices.</p>
+  <p>Yonder uses Firebase and Google Sign-In for authentication, sync, and online room functionality.</p>
+
+  <h2>Data Deletion</h2>
+  <p>Users can permanently delete their account and all stored data directly within the app by navigating to <strong>Settings → Danger Zone → Delete My Account and Data</strong>.</p>
+  <p>When account deletion is triggered:</p>
+  <ul>
+    <li>All cloud data under <code>users/{uid}</code> (sessions, work areas, goals) is permanently erased from Firebase Firestore.</li>
+    <li>Online room participation records are removed and hosted active rooms are ended.</li>
+    <li>The Firebase Authentication user account is deleted.</li>
+    <li>All local device data (sessions, work areas, goals, reminders, and local profile metadata) is wiped.</li>
+  </ul>
+  <p>For additional support or data deletion inquiries, users can contact support at <a href="mailto:info@yonderfocusapp.com">info@yonderfocusapp.com</a>.</p>
+
+  <hr>
+
+  <h2>Contact</h2>
+  <p class="contact">For privacy questions or support requests, please contact <a href="mailto:info@yonderfocusapp.com">info@yonderfocusapp.com</a>.</p>
+</main>
+</body>
+</html>
