@@ -317,7 +317,14 @@ final class AppleSignInCoordinator: NSObject, ASAuthorizationControllerDelegate,
     var onCompletion: ((Result<ASAuthorization, Error>) -> Void)?
 
     func performAppleSignIn(currentNonce: @escaping (String) -> Void) {
-        let nonce = AuthService.makeAppleNonce()
+        let nonce: String
+        do {
+            nonce = try AuthService.makeAppleNonce()
+        } catch {
+            onCompletion?(.failure(error))
+            return
+        }
+
         currentNonce(nonce)
 
         let appleIDProvider = ASAuthorizationAppleIDProvider()

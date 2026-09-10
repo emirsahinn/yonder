@@ -221,7 +221,7 @@ final class AuthService {
 
     // MARK: - Sign in with Apple
 
-    static func makeAppleNonce() -> String {
+    static func makeAppleNonce() throws -> String {
         let charset = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
         var result = ""
         var remainingLength = 32
@@ -230,7 +230,7 @@ final class AuthService {
             var randoms = [UInt8](repeating: 0, count: 16)
             let status = SecRandomCopyBytes(kSecRandomDefault, randoms.count, &randoms)
             if status != errSecSuccess {
-                fatalError("Unable to generate Apple sign-in nonce.")
+                throw AuthError.nonceGenerationFailed
             }
 
             for random in randoms where remainingLength > 0 {
@@ -456,6 +456,7 @@ enum AuthError: LocalizedError {
     case missingAppleIDToken
     case missingNonce
     case invalidAppleCredential
+    case nonceGenerationFailed
 
     var errorDescription: String? {
         switch self {
@@ -463,6 +464,7 @@ enum AuthError: LocalizedError {
         case .missingAppleIDToken: return "Apple ID token could not be retrieved."
         case .missingNonce: return "Apple sign-in nonce is missing."
         case .invalidAppleCredential: return "Apple credential could not be read."
+        case .nonceGenerationFailed: return "Apple sign-in could not be prepared securely."
         }
     }
 }

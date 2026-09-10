@@ -32,8 +32,8 @@ enum YonderPortraitTransition {
     }
 }
 
-/// Reusable branded loading indicator featuring a breathing logo animation,
-/// optional status message, and graceful cancellation option for long-running network tasks.
+/// Reusable transition/loading indicator with optional status message and graceful
+/// cancellation option for long-running network tasks.
 struct LoadingIndicatorView: View {
 
     var messageKey: LocalizedStringKey? = nil
@@ -41,7 +41,6 @@ struct LoadingIndicatorView: View {
     var onCancel: (() -> Void)? = nil
     var showCancelAfter: TimeInterval = 3.0
 
-    @State private var breathePulse: Bool = false
     @State private var allowCancel: Bool = false
 
     @Environment(\.horizontalSizeClass) private var hSizeClass
@@ -49,36 +48,22 @@ struct LoadingIndicatorView: View {
 
     var body: some View {
         ZStack {
-            // Semi-transparent backdrop
-            Color.black.opacity(0.82)
+            Color.black.opacity(0.68)
                 .ignoresSafeArea()
 
-            VStack(spacing: 18) {
-                // Breathing Logo Ring
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.14), lineWidth: 1.5)
-                        .frame(width: isIPad ? 76 : 64, height: isIPad ? 76 : 64)
+            VStack(spacing: messageKey == nil && message == nil ? 0 : 12) {
+                HourglassTransitionMark(size: isIPad ? 58 : 50)
 
-                    Image("SplashLogo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: isIPad ? 48 : 40, height: isIPad ? 48 : 40)
-                        .opacity(breathePulse ? 1.0 : 0.45)
-                        .scaleEffect(breathePulse ? 1.05 : 0.94)
-                }
-
-                // Optional Message
                 if let key = messageKey {
                     Text(key)
-                        .font(.system(size: isIPad ? 15 : 13, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(white: 0.75))
+                        .font(.system(size: isIPad ? 14 : 12, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.68))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
                 } else if let msg = message {
                     Text(msg)
-                        .font(.system(size: isIPad ? 15 : 13, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(white: 0.75))
+                        .font(.system(size: isIPad ? 14 : 12, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.68))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
                 }
@@ -103,23 +88,19 @@ struct LoadingIndicatorView: View {
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
-            .padding(.vertical, isIPad ? 28 : 22)
-            .padding(.horizontal, isIPad ? 36 : 28)
+            .padding(.vertical, isIPad ? 18 : 15)
+            .padding(.horizontal, isIPad ? 28 : 22)
             .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(white: 0.09))
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(white: 0.085).opacity(0.94))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(Color(white: 0.18), lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.6)
                     )
             )
-            .shadow(color: .black.opacity(0.5), radius: 20)
+            .shadow(color: .black.opacity(0.45), radius: 18, y: 10)
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
-                breathePulse = true
-            }
-
             if onCancel != nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + showCancelAfter) {
                     withAnimation(.easeIn(duration: 0.3)) {
@@ -129,6 +110,75 @@ struct LoadingIndicatorView: View {
             }
         }
         .preferredColorScheme(.dark)
+    }
+}
+
+private struct HourglassTransitionMark: View {
+    let size: CGFloat
+
+    @State private var rotation: Double = 0
+    @State private var sandShift: Bool = false
+    @State private var glint: Bool = false
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.white.opacity(0.055))
+
+            Circle()
+                .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.8)
+
+            Image(systemName: "hourglass")
+                .font(.system(size: size * 0.47, weight: .light))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(Color.white.opacity(0.92), Color.white.opacity(0.42))
+                .rotationEffect(.degrees(rotation))
+                .shadow(color: Color.white.opacity(0.12), radius: 8)
+
+            VStack(spacing: 3) {
+                sandDot(delay: 0.0)
+                sandDot(delay: 0.18)
+                sandDot(delay: 0.36)
+            }
+            .offset(y: sandShift ? size * 0.15 : -size * 0.15)
+            .opacity(sandShift ? 0.18 : 0.75)
+
+            Capsule()
+                .fill(
+                    LinearGradient(
+                        colors: [.clear, Color.white.opacity(0.30), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: size * 0.10, height: size * 0.66)
+                .rotationEffect(.degrees(30))
+                .offset(x: glint ? size * 0.24 : -size * 0.24)
+                .opacity(glint ? 0.0 : 0.55)
+                .blendMode(.plusLighter)
+        }
+        .frame(width: size, height: size)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.45).repeatForever(autoreverses: false)) {
+                rotation = 180
+            }
+
+            withAnimation(.easeInOut(duration: 1.45).repeatForever(autoreverses: false)) {
+                sandShift = true
+            }
+
+            withAnimation(.easeInOut(duration: 1.45).repeatForever(autoreverses: false)) {
+                glint = true
+            }
+        }
+    }
+
+    private func sandDot(delay: Double) -> some View {
+        Circle()
+            .fill(Color.white.opacity(0.72))
+            .frame(width: size * 0.045, height: size * 0.045)
+            .scaleEffect(sandShift ? 0.65 : 1.0)
+            .animation(.easeInOut(duration: 1.45).delay(delay).repeatForever(autoreverses: false), value: sandShift)
     }
 }
 

@@ -23,11 +23,10 @@ struct EscapeKeyInterceptor: UIViewRepresentable {
 
     func updateUIView(_ uiView: EscapeKeyCatcherView, context: Context) {
         uiView.onEscape = onEscape
-        DispatchQueue.main.async {
-            if !uiView.isFirstResponder {
-                uiView.becomeFirstResponder()
-            }
-        }
+        // Do not re-claim first responder here: this runs on every SwiftUI
+        // diff of the view it's attached to, which was stealing focus from
+        // any TextField the user tapped in a sheet presented above it
+        // (e.g. work area name fields), making the keyboard never appear.
     }
 }
 

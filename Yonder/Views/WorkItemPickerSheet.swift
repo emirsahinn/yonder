@@ -35,7 +35,7 @@ struct WorkItemPickerSheet: View {
     @State private var renameText: String = ""
     @State private var showRenameAlert: Bool = false
 
-    @State private var showWorkItemManagementSheet: Bool = false
+    @State private var showWorkItemManagementInline: Bool = false
     @AppStorage("is_premium_user") private var isPremiumUser: Bool = false
     @State private var showPaywallSheet: Bool = false
 
@@ -67,123 +67,86 @@ struct WorkItemPickerSheet: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // ── Header Handle & Dismiss Button ────────────────────────
-                headerView
-
-                // ── Search Bar ────────────────────────────────────────────
-                searchBarView
-                    .padding(.horizontal, hPad)
-                    .padding(.top, 12)
-                    .padding(.bottom, 8)
-
-                // ── Work Items List with Swipe Actions ────────────────────
-                List {
-                    // Top Action: Go to My Work Areas
-                    Button {
-                        showWorkItemManagementSheet = true
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color(white: 0.9))
-
-                            Text(appLanguage == "tr" ? "Çalışmalarım'a Git" : "Go to My Work Areas")
-                                .font(.system(size: 14, weight: .semibold, design: .rounded))
-                                .foregroundStyle(Color(white: 0.95))
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12))
-                                .foregroundStyle(Color(white: 0.4))
+            if showWorkItemManagementInline {
+                WorkItemManagementView(
+                    onDismissOverride: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showWorkItemManagementInline = false
                         }
-                        .padding(.horizontal, 14)
-                        .frame(height: 44)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(white: 0.12))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .strokeBorder(Color(white: 0.22), lineWidth: 0.5)
-                                )
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 4, leading: hPad, bottom: 8, trailing: hPad))
-                    .listRowSeparator(.hidden)
+                    },
+                    backButtonTitle: appLanguage == "tr" ? "Çalışma Seç" : "Select Work Area",
+                    focusNewSubjectOnAppear: true
+                )
+                .transition(.move(edge: .trailing).combined(with: .opacity))
+            } else {
+                VStack(spacing: 0) {
+                    // ── Header Handle & Dismiss Button ────────────────────────
+                    headerView
 
-                    // Matching / Filtered Subjects List
-                    ForEach(filteredSubjects) { subject in
-                        workItemRow(subject: subject) {
-                            selectExistingSubject(subject)
-                        }
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 4, leading: hPad, bottom: 4, trailing: hPad))
-                        .listRowSeparator(.hidden)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                subjectToDelete = subject
-                                showDeleteConfirmation = true
-                            } label: {
-                                Label(appLanguage == "tr" ? "Sil" : "Delete", systemImage: "trash")
+                    // ── Search Bar ────────────────────────────────────────────
+                    searchBarView
+                        .padding(.horizontal, hPad)
+                        .padding(.top, 12)
+                        .padding(.bottom, 8)
+
+                    // ── Work Items List with Swipe Actions ────────────────────
+                    List {
+                        // Top Action: Go to My Work Areas
+                        goToWorkItemsRow
+
+                        // Matching / Filtered Subjects List
+                        ForEach(filteredSubjects) { subject in
+                            workItemRow(subject: subject) {
+                                selectExistingSubject(subject)
                             }
-                            .tint(.red)
-
-                            Button {
-                                subjectToRename = subject
-                                renameText = subject.name
-                                showRenameAlert = true
-                            } label: {
-                                Label(appLanguage == "tr" ? "Düzenle" : "Edit", systemImage: "pencil")
-                            }
-                            .tint(Color(white: 0.3))
-                        }
-                    }
-
-                    // Guidance when typed query has no match
-                    if !trimmedQuery.isEmpty && !hasExactMatch {
-                        VStack(spacing: 10) {
-                            Text(appLanguage == "tr" ? "Eşleşen çalışma bulunamadı." : "No matching work area found.")
-                                .font(.system(size: 13, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color(white: 0.45))
-
-                            Button {
-                                showWorkItemManagementSheet = true
-                            } label: {
-                                Text(appLanguage == "tr" ? "Yeni Çalışma Oluştur" : "Create New Work Area")
-                                    .font(.system(size: 12, weight: .semibold, design: .rounded))
-                                    .foregroundStyle(Color.black)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 7)
-                                    .background(Capsule().fill(Color.white))
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 4, leading: hPad, bottom: 4, trailing: hPad))
-                        .listRowSeparator(.hidden)
-                    }
-
-                    // Empty State Info when no subjects exist yet and query is empty
-                    if savedSubjects.filter({ !$0.isArchived }).isEmpty && trimmedQuery.isEmpty {
-                        emptyStateInfo
                             .listRowBackground(Color.clear)
-                            .listRowInsets(EdgeInsets(top: 16, leading: hPad, bottom: 16, trailing: hPad))
+                            .listRowInsets(EdgeInsets(top: 4, leading: hPad, bottom: 4, trailing: hPad))
                             .listRowSeparator(.hidden)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    subjectToDelete = subject
+                                    showDeleteConfirmation = true
+                                } label: {
+                                    Label(appLanguage == "tr" ? "Sil" : "Delete", systemImage: "trash")
+                                }
+                                .tint(.red)
+
+                                Button {
+                                    subjectToRename = subject
+                                    renameText = subject.name
+                                    showRenameAlert = true
+                                } label: {
+                                    Label(appLanguage == "tr" ? "Düzenle" : "Edit", systemImage: "pencil")
+                                }
+                                .tint(Color(white: 0.3))
+                            }
+                        }
+
+                        // Guidance when typed query has no match
+                        if !trimmedQuery.isEmpty && !hasExactMatch {
+                            noMatchCreatePrompt
+                                .listRowBackground(Color.clear)
+                                .listRowInsets(EdgeInsets(top: 4, leading: hPad, bottom: 4, trailing: hPad))
+                                .listRowSeparator(.hidden)
+                        }
+
+                        // Empty State Info when no subjects exist yet and query is empty
+                        if savedSubjects.filter({ !$0.isArchived }).isEmpty && trimmedQuery.isEmpty {
+                            emptyStateInfo
+                                .listRowBackground(Color.clear)
+                                .listRowInsets(EdgeInsets(top: 16, leading: hPad, bottom: 16, trailing: hPad))
+                                .listRowSeparator(.hidden)
+                        }
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .scrollDismissesKeyboard(.never)
                 }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
+                .frame(maxWidth: isIPad ? 680 : .infinity)
+                .transition(.move(edge: .leading).combined(with: .opacity))
             }
-            .frame(maxWidth: isIPad ? 680 : .infinity)
         }
-        .sheet(isPresented: $showWorkItemManagementSheet) {
-            WorkItemManagementView()
-        }
+        .animation(.easeInOut(duration: 0.2), value: showWorkItemManagementInline)
         .alert(appLanguage == "tr" ? "Çalışma Alanını Düzenle" : "Edit Work Area", isPresented: $showRenameAlert) {
             TextField(appLanguage == "tr" ? "Çalışma Adı" : "Work Area Name", text: $renameText)
             Button(appLanguage == "tr" ? "Vazgeç" : "Cancel", role: .cancel) {
@@ -268,6 +231,8 @@ struct WorkItemPickerSheet: View {
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(.white)
                 .focused($isSearchFocused)
+                .submitLabel(.search)
+                .textInputAutocapitalization(.sentences)
                 .autocorrectionDisabled()
 
             if !searchQuery.isEmpty {
@@ -289,8 +254,74 @@ struct WorkItemPickerSheet: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(Color(white: 0.18), lineWidth: 0.5)
-                )
+            )
         )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isSearchFocused = true
+        }
+    }
+
+    private var goToWorkItemsRow: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showWorkItemManagementInline = true
+            }
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color(white: 0.9))
+
+                Text(appLanguage == "tr" ? "Çalışmalarım'a Git" : "Go to My Work Areas")
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.95))
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color(white: 0.4))
+            }
+            .padding(.horizontal, 14)
+            .frame(height: 44)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(white: 0.12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color(white: 0.22), lineWidth: 0.5)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 4, leading: hPad, bottom: 8, trailing: hPad))
+        .listRowSeparator(.hidden)
+    }
+
+    private var noMatchCreatePrompt: some View {
+        VStack(spacing: 10) {
+            Text(appLanguage == "tr" ? "Eşleşen çalışma bulunamadı." : "No matching work area found.")
+                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .foregroundStyle(Color(white: 0.45))
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showWorkItemManagementInline = true
+                }
+            } label: {
+                Text(appLanguage == "tr" ? "Yeni Çalışma Oluştur" : "Create New Work Area")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.black)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Capsule().fill(Color.white))
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
     }
 
     // MARK: - Work Item Row
@@ -411,7 +442,9 @@ struct WorkItemPickerSheet: View {
             }
 
             Button {
-                showWorkItemManagementSheet = true
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showWorkItemManagementInline = true
+                }
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "plus.circle.fill")

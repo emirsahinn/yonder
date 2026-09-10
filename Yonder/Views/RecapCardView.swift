@@ -163,77 +163,40 @@ struct RecapCardView: View {
 
             VStack(spacing: 0) {
 
-                // ── Top Action Bar ─────────────────────────────────────────
-                HStack(spacing: 12) {
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundStyle(Color(white: 0.45))
-                            .padding(10)
-                    }
-                    .buttonStyle(.plain)
-
-                    Spacer()
-
-                    // Period Segment Selector
-                    HStack(spacing: 2) {
-                        ForEach(WorkGoalPeriod.allCases) { p in
-                            let isSelected = period == p
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    period = p
-                                }
-                            } label: {
-                                Text(p.title(lang: appLanguage))
-                                    .font(.system(size: 12, weight: isSelected ? .semibold : .medium, design: .rounded))
-                                    .foregroundStyle(isSelected ? Color.black : Color(white: 0.50))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 6)
-                                    .background(Capsule().fill(isSelected ? Color.white : Color.clear))
-                            }
-                            .buttonStyle(.plain)
+                // ── Top Bar ───────────────────────────────────────────────
+                VStack(spacing: 12) {
+                    HStack {
+                        Button { dismiss() } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(Color(white: 0.62))
+                                .frame(width: 34, height: 34)
+                                .background(Circle().fill(Color.white.opacity(0.07)))
                         }
-                    }
-                    .padding(3)
-                    .background(
-                        Capsule()
-                            .fill(Color(white: 0.08))
-                            .overlay(Capsule().strokeBorder(Color(white: 0.14), lineWidth: 0.5))
-                    )
+                        .buttonStyle(.plain)
 
-                    Spacer()
+                        Spacer()
 
-                    // Share button
-                    Button {
-                        renderAndShare()
-                    } label: {
-                        HStack(spacing: 5) {
-                            if isRendering {
-                                ProgressView()
-                                    .tint(Color(white: 0.6))
-                                    .scaleEffect(0.8)
-                            } else {
-                                Image(systemName: "square.and.arrow.up")
-                                    .font(.system(size: 13, weight: .medium))
-                            }
-                            Text(shareButtonTitle)
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                        VStack(spacing: 2) {
+                            Text(appLanguage == "tr" ? "Paylaşım Kartı" : "Share Card")
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color(white: 0.92))
+
+                            Text(stats.periodLabel)
+                                .font(.system(size: 11, weight: .medium, design: .rounded))
+                                .foregroundStyle(Color(white: 0.42))
                         }
-                        .foregroundStyle(Color(white: 0.85))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .background(
-                            Capsule()
-                                .fill(Color(white: 0.10))
-                                .overlay(Capsule().strokeBorder(Color(white: 0.18), lineWidth: 0.5))
-                        )
+
+                        Spacer()
+
+                        Color.clear.frame(width: 34, height: 34)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(isRendering || stats.totalSessionCount == 0)
+
+                    periodSegmentSelector
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 18)
+                .padding(.top, 14)
+                .padding(.bottom, 10)
 
                 // ── Card Preview (Responsive Container) ───────────────────────
                 GeometryReader { geo in
@@ -269,6 +232,11 @@ struct RecapCardView: View {
                         .padding(.vertical, 8)
                     }
                 }
+
+                shareActionButton
+                    .padding(.horizontal, 18)
+                    .padding(.top, 8)
+                    .padding(.bottom, 14)
             }
 
             if isRendering {
@@ -286,6 +254,71 @@ struct RecapCardView: View {
                 ShareSheet(items: [img])
             }
         }
+    }
+
+    private var periodSegmentSelector: some View {
+        HStack(spacing: 3) {
+            ForEach(WorkGoalPeriod.allCases) { p in
+                let isSelected = period == p
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        period = p
+                    }
+                } label: {
+                    Text(p.title(lang: appLanguage))
+                        .font(.system(size: 12, weight: isSelected ? .semibold : .medium, design: .rounded))
+                        .foregroundStyle(isSelected ? Color.black : Color(white: 0.58))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 32)
+                        .background(Capsule().fill(isSelected ? Color.white : Color.clear))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(3)
+        .background(
+            Capsule()
+                .fill(Color(white: 0.075))
+                .overlay(Capsule().strokeBorder(Color(white: 0.15), lineWidth: 0.5))
+        )
+    }
+
+    private var shareActionButton: some View {
+        Button {
+            renderAndShare()
+        } label: {
+            HStack(spacing: 9) {
+                if isRendering {
+                    ProgressView()
+                        .tint(.black)
+                        .scaleEffect(0.82)
+                } else {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+
+                Text(stats.totalSessionCount == 0
+                     ? (appLanguage == "tr" ? "Paylaşmak için önce oturum tamamla" : "Complete a session to share")
+                     : shareButtonTitle)
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+            }
+            .foregroundStyle(stats.totalSessionCount == 0 ? Color(white: 0.48) : Color.black)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(
+                Capsule()
+                    .fill(stats.totalSessionCount == 0 ? Color(white: 0.12) : Color.white)
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(Color.white.opacity(stats.totalSessionCount == 0 ? 0.08 : 0), lineWidth: 0.5)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isRendering || stats.totalSessionCount == 0)
+        .accessibilityLabel(shareButtonTitle)
     }
 
     // MARK: - Render & Share
@@ -328,11 +361,11 @@ struct RecapCard: View {
     private var heroTitle: String {
         switch stats.period {
         case .daily:
-            return appLanguage == "tr" ? "Bugünkü Çalışmalarım" : "Today's Focus"
+            return appLanguage == "tr" ? "Günlük Rapor" : "Daily Recap"
         case .weekly:
-            return appLanguage == "tr" ? "Bu Haftaki Çalışmalarım" : "This Week's Focus"
+            return appLanguage == "tr" ? "Haftalık Rapor" : "Weekly Recap"
         case .monthly:
-            return appLanguage == "tr" ? "Bu Ayki Çalışmalarım" : "This Month's Focus"
+            return appLanguage == "tr" ? "Aylık Rapor" : "Monthly Recap"
         }
     }
 
@@ -347,14 +380,13 @@ struct RecapCard: View {
                 return appLanguage == "tr" ? "Bu ay henüz çalışma kaydı oluşmadı." : "No focus records this month yet."
             }
         }
-        let durationStr = stats.formattedTotal(appLanguage: appLanguage)
         switch stats.period {
         case .daily:
-            return appLanguage == "tr" ? "Bugün \(durationStr) odaklandım." : "I focused for \(durationStr) today."
+            return appLanguage == "tr" ? "Bugünkü odak sürem" : "My focus time today"
         case .weekly:
-            return appLanguage == "tr" ? "Bu hafta \(durationStr) odaklandım." : "I focused for \(durationStr) this week."
+            return appLanguage == "tr" ? "Bu haftaki odak sürem" : "My focus time this week"
         case .monthly:
-            return appLanguage == "tr" ? "Bu ay \(durationStr) odaklandım." : "I focused for \(durationStr) this month."
+            return appLanguage == "tr" ? "Bu ayki odak sürem" : "My focus time this month"
         }
     }
 
@@ -391,6 +423,20 @@ struct RecapCard: View {
                                 .font(.system(size: w * 0.042, weight: .light, design: .rounded))
                                 .foregroundStyle(Color(white: 0.65))
                                 .tracking(w * 0.024)
+
+                            Spacer()
+
+                            Text(stats.periodLabel)
+                                .font(.system(size: w * 0.026, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color(white: 0.62))
+                                .lineLimit(1)
+                                .padding(.horizontal, w * 0.028)
+                                .padding(.vertical, h * 0.006)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.white.opacity(0.07))
+                                        .overlay(Capsule().strokeBorder(Color.white.opacity(0.12), lineWidth: 0.5))
+                                )
                         }
 
                         Rectangle()
@@ -411,12 +457,28 @@ struct RecapCard: View {
                     Spacer().frame(height: h * 0.016)
 
                     // ── Hero Narrative Sentence ────────────────────────
-                    Text(heroNarrativeSentence)
-                        .font(.system(size: w * 0.068, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color(white: 0.95))
-                        .lineSpacing(4)
-                        .minimumScaleFactor(0.7)
-                        .lineLimit(3)
+                    if stats.totalSessionCount > 0 {
+                        VStack(alignment: .leading, spacing: h * 0.006) {
+                            Text(stats.formattedTotal(appLanguage: appLanguage))
+                                .font(.system(size: w * 0.118, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(white: 0.97))
+                                .monospacedDigit()
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.72)
+
+                            Text(heroNarrativeSentence)
+                                .font(.system(size: w * 0.038, weight: .medium, design: .rounded))
+                                .foregroundStyle(Color(white: 0.58))
+                                .lineLimit(1)
+                        }
+                    } else {
+                        Text(heroNarrativeSentence)
+                            .font(.system(size: w * 0.068, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color(white: 0.95))
+                            .lineSpacing(4)
+                            .minimumScaleFactor(0.7)
+                            .lineLimit(3)
+                    }
 
                     // ── Goal Progress Line (If target exists) ──────────
                     if stats.goalTargetSeconds > 0 {
@@ -478,45 +540,47 @@ struct RecapCard: View {
                     Spacer().frame(height: h * 0.035)
 
                     if stats.totalSessionCount > 0 {
-                        // ── 2x2 Supporting Details Grid ───────────────────
-                        VStack(spacing: h * 0.025) {
-                            HStack(alignment: .top, spacing: w * 0.04) {
-                                // Top Work Area
-                                detailTile(
-                                    title: appLanguage == "tr" ? "Baskın Çalışma" : "Top Work Area",
-                                    value: stats.topWorkAreaName ?? (appLanguage == "tr" ? "Genel Odak" : "General Focus"),
-                                    subtitle: stats.topWorkAreaName != nil ? stats.formattedTopWorkAreaDuration(appLanguage: appLanguage) : nil,
-                                    width: w
-                                )
+                        // ── Compact Details ───────────────────────────────
+                        HStack(spacing: w * 0.026) {
+                            miniMetric(
+                                title: appLanguage == "tr" ? "Oturum" : "Sessions",
+                                value: "\(stats.totalSessionCount)",
+                                width: w
+                            )
 
-                                // Active Days
-                                detailTile(
-                                    title: appLanguage == "tr" ? "Aktif Günler" : "Active Days",
-                                    value: stats.formattedActiveDays(appLanguage: appLanguage),
-                                    subtitle: stats.roomTotalSeconds > 0
-                                        ? (appLanguage == "tr" ? "Sessiz odalarda \(ReportMetrics.formattedTime(seconds: stats.roomTotalSeconds, lang: appLanguage))" : "\(ReportMetrics.formattedTime(seconds: stats.roomTotalSeconds, lang: appLanguage)) in quiet rooms")
-                                        : nil,
-                                    width: w
-                                )
-                            }
+                            miniMetric(
+                                title: appLanguage == "tr" ? "Aktif" : "Active",
+                                value: "\(stats.activeDays)",
+                                width: w
+                            )
 
-                            HStack(alignment: .top, spacing: w * 0.04) {
-                                // Average Session
-                                detailTile(
-                                    title: appLanguage == "tr" ? "Ortalama Oturum" : "Average Session",
-                                    value: stats.formattedAverage(appLanguage: appLanguage),
-                                    subtitle: nil,
-                                    width: w
-                                )
+                            miniMetric(
+                                title: appLanguage == "tr" ? "Ortalama" : "Average",
+                                value: stats.formattedAverage(appLanguage: appLanguage),
+                                width: w
+                            )
+                        }
 
-                                // Strongest Rhythm
-                                detailTile(
-                                    title: appLanguage == "tr" ? "En Güçlü Zaman" : "Strongest Rhythm",
-                                    value: stats.formattedStrongestTime(appLanguage: appLanguage),
-                                    subtitle: nil,
-                                    width: w
-                                )
-                            }
+                        Spacer().frame(height: h * 0.024)
+
+                        VStack(spacing: h * 0.014) {
+                            insightRow(
+                                title: appLanguage == "tr" ? "Baskın Çalışma" : "Top Work Area",
+                                value: stats.topWorkAreaName ?? (appLanguage == "tr" ? "Genel Odak" : "General Focus"),
+                                subtitle: stats.topWorkAreaName != nil ? stats.formattedTopWorkAreaDuration(appLanguage: appLanguage) : nil,
+                                icon: "target",
+                                width: w
+                            )
+
+                            insightRow(
+                                title: appLanguage == "tr" ? "En Güçlü Ritim" : "Strongest Rhythm",
+                                value: stats.formattedStrongestTime(appLanguage: appLanguage),
+                                subtitle: stats.roomTotalSeconds > 0
+                                    ? (appLanguage == "tr" ? "Odalarda \(ReportMetrics.formattedTime(seconds: stats.roomTotalSeconds, lang: appLanguage))" : "\(ReportMetrics.formattedTime(seconds: stats.roomTotalSeconds, lang: appLanguage)) in rooms")
+                                    : nil,
+                                icon: "waveform.path.ecg",
+                                width: w
+                            )
                         }
 
                         Spacer().frame(height: h * 0.035)
@@ -559,29 +623,66 @@ struct RecapCard: View {
         .environment(\.locale, currentLocale)
     }
 
-    private func detailTile(title: String, value: String, subtitle: String?, width: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
+    private func miniMetric(title: String, value: String, width: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: width * 0.026, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(white: 0.40))
+                .font(.system(size: width * 0.024, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color(white: 0.42))
                 .textCase(.uppercase)
-                .tracking(1.2)
+                .tracking(1.0)
 
             Text(value)
-                .font(.system(size: width * 0.040, weight: .semibold, design: .rounded))
-                .foregroundStyle(Color(white: 0.90))
+                .font(.system(size: width * 0.040, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(white: 0.92))
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
-
-            if let sub = subtitle {
-                Text(sub)
-                    .font(.system(size: width * 0.030, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(white: 0.50))
-                    .monospacedDigit()
-            }
+                .minimumScaleFactor(0.72)
+                .monospacedDigit()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(width * 0.035)
+        .padding(width * 0.030)
+        .background(
+            RoundedRectangle(cornerRadius: 9)
+                .fill(Color.white.opacity(0.055))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 9)
+                        .strokeBorder(Color.white.opacity(0.09), lineWidth: 0.5)
+                )
+        )
+    }
+
+    private func insightRow(title: String, value: String, subtitle: String?, icon: String, width: CGFloat) -> some View {
+        HStack(spacing: width * 0.03) {
+            Image(systemName: icon)
+                .font(.system(size: width * 0.032, weight: .semibold))
+                .foregroundStyle(Color(white: 0.82))
+                .frame(width: width * 0.076, height: width * 0.076)
+                .background(Circle().fill(Color.white.opacity(0.08)))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: width * 0.024, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.42))
+                    .textCase(.uppercase)
+                    .tracking(1.0)
+
+                Text(value)
+                    .font(.system(size: width * 0.038, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.92))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.74)
+
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.system(size: width * 0.028, weight: .regular, design: .rounded))
+                        .foregroundStyle(Color(white: 0.48))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+                }
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(width * 0.030)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(white: 0.04))
@@ -591,6 +692,7 @@ struct RecapCard: View {
                 )
         )
     }
+
 }
 
 // MARK: - Stats Calculator

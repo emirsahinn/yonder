@@ -32,6 +32,26 @@ struct WorkItemManagementView: View {
     @State private var searchQuery: String = ""
     @State private var addErrorText: String? = nil
     @State private var showPaywallSheet: Bool = false
+    @FocusState private var focusedField: FocusedField?
+
+    private let onDismissOverride: (() -> Void)?
+    private let backButtonTitleOverride: String?
+    private let focusNewSubjectOnAppear: Bool
+
+    private enum FocusedField {
+        case newSubject
+        case search
+    }
+
+    init(
+        onDismissOverride: (() -> Void)? = nil,
+        backButtonTitle: String? = nil,
+        focusNewSubjectOnAppear: Bool = false
+    ) {
+        self.onDismissOverride = onDismissOverride
+        self.backButtonTitleOverride = backButtonTitle
+        self.focusNewSubjectOnAppear = focusNewSubjectOnAppear
+    }
 
     private var filteredSubjects: [Subject] {
         let trimmed = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -102,6 +122,7 @@ struct WorkItemManagementView: View {
                         .padding(.horizontal, isIPad ? 60 : 20)
                         .padding(.bottom, 24)
                     }
+                    .scrollDismissesKeyboard(.never)
                 }
             }
         }
@@ -143,6 +164,11 @@ struct WorkItemManagementView: View {
                 savedSubjects: savedSubjects,
                 allSessions: allSessions
             )
+            if focusNewSubjectOnAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    focusedField = .newSubject
+                }
+            }
         }
     }
 
@@ -151,12 +177,16 @@ struct WorkItemManagementView: View {
     private var headerView: some View {
         HStack {
             Button {
-                dismiss()
+                if let onDismissOverride {
+                    onDismissOverride()
+                } else {
+                    dismiss()
+                }
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 14, weight: .semibold))
-                    Text(appLanguage == "tr" ? "Ayarlar" : "Settings")
+                    Text(backButtonTitleOverride ?? (appLanguage == "tr" ? "Ayarlar" : "Settings"))
                         .font(.system(size: 14, design: .rounded))
                 }
                 .foregroundStyle(Color(white: 0.7))
@@ -190,6 +220,10 @@ struct WorkItemManagementView: View {
                 TextField("", text: $newSubjectText, prompt: Text(appLanguage == "tr" ? "Yeni çalışma adı (örn. Matematik)" : "New work area name (e.g. Math)").foregroundStyle(Color(white: 0.35)))
                     .font(.system(size: 13, design: .rounded))
                     .foregroundStyle(.white)
+                    .focused($focusedField, equals: .newSubject)
+                    .submitLabel(.done)
+                    .textInputAutocapitalization(.sentences)
+                    .autocorrectionDisabled()
                     .onSubmit {
                         addNewSubject()
                     }
@@ -220,6 +254,10 @@ struct WorkItemManagementView: View {
                             .strokeBorder(Color(white: 0.16), lineWidth: 0.5)
                     )
             )
+            .contentShape(Rectangle())
+            .onTapGesture {
+                focusedField = .newSubject
+            }
 
             if WorkItemLimits.isLimitReached(currentCount: activeSubjects.count, isPremiumUser: isPremiumUser) {
                 HStack(spacing: 8) {
@@ -322,6 +360,10 @@ struct WorkItemManagementView: View {
             TextField("", text: $searchQuery, prompt: Text(appLanguage == "tr" ? "Çalışmalarda ara..." : "Search work areas...").foregroundStyle(Color(white: 0.35)))
                 .font(.system(size: 13, design: .rounded))
                 .foregroundStyle(.white)
+                .focused($focusedField, equals: .search)
+                .submitLabel(.search)
+                .textInputAutocapitalization(.sentences)
+                .autocorrectionDisabled()
 
             if !searchQuery.isEmpty {
                 Button {
@@ -342,8 +384,12 @@ struct WorkItemManagementView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(Color(white: 0.16), lineWidth: 0.5)
-                )
+            )
         )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            focusedField = .search
+        }
     }
 
     private func statsForSubject(_ name: String) -> (totalSeconds: Int, count: Int) {
