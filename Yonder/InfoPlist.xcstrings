@@ -49,6 +49,42 @@
         }
       }
     },
+    "NSUserTrackingUsageDescription" : {
+      "comment" : "Privacy - Tracking Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This identifier will be used to show you more relevant ads."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu tanımlayıcı size daha ilgili reklamlar göstermek için kullanılacaktır."
+          }
+        }
+      }
+    },
+    "This identifier will be used to show you more relevant ads." : {
+      "comment" : "Privacy - Tracking Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This identifier will be used to show you more relevant ads."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu tanımlayıcı size daha ilgili reklamlar göstermek için kullanılacaktır."
+          }
+        }
+      }
+    },
     "Start 25 Minutes" : {
       "comment" : "Home screen quick action title",
       "extractionState" : "manual",

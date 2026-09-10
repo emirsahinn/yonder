@@ -20,12 +20,14 @@ struct SessionCompleteView: View {
     let onDiscard: () -> Void
 
     @AppStorage("app_language") private var appLanguage: String = "en"
+    @AppStorage("is_premium_user") private var isPremiumUser: Bool = false
     @State private var showBreakProposal: Bool = false
     @State private var hasSaved: Bool = false
     @State private var isSaving: Bool = false
     @State private var transitionMessage: String?
     @State private var selectedWorkArea: String?
     @State private var showWorkItemPickerSheet: Bool = false
+    @State private var showPaywallSheet: Bool = false
 
     @Environment(\.horizontalSizeClass) private var hSizeClass
     @Environment(\.verticalSizeClass) private var vSizeClass
@@ -91,6 +93,11 @@ struct SessionCompleteView: View {
         }
         .sheet(isPresented: $showWorkItemPickerSheet) {
             WorkItemPickerSheet(selectedWorkItem: $selectedWorkArea)
+        }
+        .sheet(isPresented: $showPaywallSheet) {
+            YonderPaywallSheetView {
+                showPaywallSheet = false
+            }
         }
         .animation(.easeInOut(duration: 0.25), value: isSaving)
         .preferredColorScheme(.dark)
@@ -206,6 +213,7 @@ struct SessionCompleteView: View {
                                 await YonderTransitionHelper.withMinimumDuration(seconds: 0.45) {
                                     onSave(selectedWorkArea)
                                 }
+                                _ = await AdMobService.shared.showCompletionInterstitialIfNeeded()
                                 await MainActor.run {
                                     onFinish()
                                 }
@@ -238,6 +246,7 @@ struct SessionCompleteView: View {
                             HapticService.warning()
                             Task {
                                 try? await Task.sleep(nanoseconds: 450_000_000)
+                                _ = await AdMobService.shared.showCompletionInterstitialIfNeeded()
                                 await MainActor.run {
                                     onDiscard()
                                 }
@@ -248,6 +257,23 @@ struct SessionCompleteView: View {
                                 .foregroundStyle(Color(white: 0.45))
                         }
                         .buttonStyle(.plain)
+
+                        if !isPremiumUser {
+                            Button {
+                                HapticService.light()
+                                showPaywallSheet = true
+                            } label: {
+                                HStack(spacing: 7) {
+                                    Image(systemName: "sparkles")
+                                        .font(.system(size: 12, weight: .semibold))
+                                    Text(appLanguage == "tr" ? "Reklamları kaldır" : "Remove ads")
+                                        .font(.system(size: isIPad ? 15 : 13, weight: .semibold, design: .rounded))
+                                }
+                                .foregroundStyle(Color(white: 0.72))
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.top, 2)
+                        }
                     }
                     .padding(.horizontal, isLandscape ? 40 : (isIPad ? 80 : 32))
                     .padding(.bottom, isLandscape ? 20 : (isIPad ? 40 : 28))

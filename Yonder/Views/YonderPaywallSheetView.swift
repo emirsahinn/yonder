@@ -154,6 +154,12 @@ struct YonderPaywallSheetView: View {
                 subtitle: isTurkish ? "Hedef ilerlemeni raporlarında daha net gör." : "See your goal progress more clearly in reports."
             )
 
+            benefitRow(
+                icon: "nosign",
+                title: isTurkish ? "Reklamsız odaklanma" : "Ad-free focus",
+                subtitle: isTurkish ? "Oturum sonunda araya giren reklamlar olmadan devam et." : "Continue without ads at the end of sessions."
+            )
+
         }
         .padding(18)
         .background(

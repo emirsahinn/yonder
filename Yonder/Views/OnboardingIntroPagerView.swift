@@ -194,7 +194,7 @@ struct OnboardingIntroPagerView: View {
                                             .overlay(Capsule().strokeBorder(Color.white.opacity(0.12), lineWidth: 0.5))
                                     )
                             }
-                            .buttonStyle(IntroPressableStyle())
+                            .buttonStyle(PressableButtonStyle())
                             .transition(.opacity)
                         }
                     }
@@ -244,7 +244,7 @@ struct OnboardingIntroPagerView: View {
                     .shadow(color: currentAccent.opacity(0.45), radius: 20, y: 6)
             )
         }
-        .buttonStyle(IntroPressableStyle())
+        .buttonStyle(PressableButtonStyle())
         .frame(width: metrics.nextButtonWidth)
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.bottom, metrics.bottomButtonPadding)
@@ -295,14 +295,6 @@ private struct OnboardingProgressBar: View {
             }
         }
         .animation(.easeInOut(duration: 0.35), value: currentPage)
-    }
-}
-
-private struct IntroPressableStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -713,7 +705,7 @@ private struct IntroPage4: View {
                             .shadow(color: accent.opacity(0.55), radius: 22, y: 8)
                     )
                 }
-                .buttonStyle(IntroPressableStyle())
+                .buttonStyle(PressableButtonStyle())
                 .frame(width: metrics.nextButtonWidth)
                 .opacity(appear ? 1 : 0)
 

@@ -66,6 +66,7 @@ struct YonderApp: App {
     @State private var showSplash = true
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    @AppStorage("hasSeenNotificationPermissionPrompt") private var hasSeenNotificationPermissionPrompt: Bool = false
     @AppStorage("app_language") private var appLanguage: String = "en"
     @State private var authService: AuthService
     @State private var pendingQuickActionDuration: Int? = nil
@@ -85,6 +86,7 @@ struct YonderApp: App {
         _authService = State(initialValue: AuthService.shared)
         _ = NotificationService.shared
         _ = LanguageService.shared
+        AdMobService.shared.configureOnLaunch()
         // Schedule the weekly recap reminder (no-op if permission not granted yet)
         NotificationService.shared.scheduleWeeklyRecapNotification()
     }
@@ -114,6 +116,17 @@ struct YonderApp: App {
                     OnboardingView {
                         hasSeenOnboarding = true
                     }
+                    .transition(.opacity)
+                    .zIndex(3)
+                }
+
+                // ── Post-update notification permission prompt (existing
+                //    users who already finished onboarding before this
+                //    prompt existed) ──
+                if !showSplash && hasSeenOnboarding && !hasSeenNotificationPermissionPrompt {
+                    PostUpdateNotificationPermissionPrompt(
+                        hasSeenNotificationPermissionPrompt: $hasSeenNotificationPermissionPrompt
+                    )
                     .transition(.opacity)
                     .zIndex(3)
                 }

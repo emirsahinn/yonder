@@ -47,22 +47,74 @@ struct ReportView: View {
     @Query(sort: \Subject.lastUsedDate, order: .reverse) private var savedSubjects: [Subject]
 
     @State private var selectedPeriod: ReportPeriod = .daily
+    @State private var referenceDate: Date = Date()
     @State private var showSessionLog: Bool = false
     @State private var showRecapCard: Bool = false
+    @State private var showFocusGoals: Bool = false
     @State private var selectedDayForDetail: Date? = nil
 
     @Environment(\.horizontalSizeClass) private var hSizeClass
     private var isIPad: Bool { hSizeClass == .regular }
 
     private var calendar: Calendar { Calendar.current }
-    private var now: Date { Date() }
+    private var now: Date { referenceDate }
+
+    private var isViewingCurrentPeriod: Bool {
+        switch selectedPeriod {
+        case .daily:
+            return calendar.isDateInToday(referenceDate)
+        case .weekly:
+            return calendar.isDate(referenceDate, equalTo: Date(), toGranularity: .weekOfYear)
+        case .monthly:
+            return calendar.isDate(referenceDate, equalTo: Date(), toGranularity: .month)
+        }
+    }
+
+    private func shiftPeriod(by amount: Int) {
+        let component: Calendar.Component
+        switch selectedPeriod {
+        case .daily: component = .day
+        case .weekly: component = .weekOfYear
+        case .monthly: component = .month
+        }
+        guard let shifted = calendar.date(byAdding: component, value: amount, to: referenceDate) else { return }
+        // Never navigate into the future beyond today.
+        referenceDate = min(shifted, Date())
+    }
+
+    private var periodRangeLabel: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: appLanguage)
+
+        switch selectedPeriod {
+        case .daily:
+            if calendar.isDateInToday(referenceDate) {
+                return appLanguage == "tr" ? "Bugün" : "Today"
+            }
+            if calendar.isDateInYesterday(referenceDate) {
+                return appLanguage == "tr" ? "Dün" : "Yesterday"
+            }
+            formatter.dateFormat = "d MMMM"
+            return formatter.string(from: referenceDate)
+
+        case .weekly:
+            guard let interval = calendar.dateInterval(of: .weekOfYear, for: referenceDate) else { return "" }
+            let end = calendar.date(byAdding: .day, value: -1, to: interval.end) ?? interval.end
+            formatter.dateFormat = "d MMM"
+            return "\(formatter.string(from: interval.start)) – \(formatter.string(from: end))"
+
+        case .monthly:
+            formatter.dateFormat = "MMMM yyyy"
+            return formatter.string(from: referenceDate)
+        }
+    }
 
     // MARK: - Period Filtered Sessions & Metrics
 
     private var periodSessions: [FocusSession] {
         switch selectedPeriod {
         case .daily:
-            return sessions.filter { calendar.isDateInToday($0.date) }
+            return sessions.filter { calendar.isDate($0.date, inSameDayAs: now) }
 
         case .weekly:
             guard let weekStart = calendar.dateInterval(of: .weekOfYear, for: now)?.start else { return [] }
@@ -130,6 +182,39 @@ struct ReportView: View {
             return appLanguage == "tr" ? "Yok" : "None"
         }
         return top.displayName
+    }
+
+    private var periodEyebrow: String {
+        switch selectedPeriod {
+        case .daily:
+            return appLanguage == "tr" ? "BUGÜNÜN ODAĞI" : "TODAY'S FOCUS"
+        case .weekly:
+            return appLanguage == "tr" ? "HAFTALIK RİTİM" : "WEEKLY RHYTHM"
+        case .monthly:
+            return appLanguage == "tr" ? "AYLIK İZ" : "MONTHLY TRACE"
+        }
+    }
+
+    private var periodInsightText: String {
+        if periodTotalSeconds <= 0 {
+            return appLanguage == "tr"
+                ? "10 dakikalık kısa bir oturum iyi bir başlangıç olur."
+                : "A quick 10-minute session is a clean way to start."
+        }
+
+        let countText = appLanguage == "tr"
+            ? "\(periodSessionCount) oturum"
+            : "\(periodSessionCount) \(periodSessionCount == 1 ? "session" : "sessions")"
+
+        if topWorkAreaName != (appLanguage == "tr" ? "Yok" : "None") {
+            return appLanguage == "tr"
+                ? "\(topWorkAreaName) bu dönemin en baskın çalışma alanı."
+                : "\(topWorkAreaName) is your strongest work area this period."
+        }
+
+        return appLanguage == "tr"
+            ? "\(countText) tamamlandı."
+            : "\(countText) completed."
     }
 
     // MARK: - Work Breakdown Data Model
@@ -232,22 +317,19 @@ struct ReportView: View {
                         // Period Segment Picker
                         periodPickerSection
 
-                        // Share CTA Button
-                        shareButtonSection
+                        // Previous / Next Period Navigation
+                        periodNavigationRow
 
-                        // 1. Goal Progress Card
-                        goalProgressCard
+                        // 1. Focus Summary
+                        focusSummaryCard
 
-                        // 2. Compact 4-Metric Grid
-                        compactMetricsGrid
-
-                        // 3. Work Area Breakdown
+                        // 2. Work Area Breakdown
                         workBreakdownSection
 
-                        // 4. Calendar / Date Activity
+                        // 3. Calendar / Date Activity
                         calendarDateSection
 
-                        // 5. Past Sessions Button
+                        // 4. Past Sessions Button
                         pastSessionsButton
                     }
                     .frame(maxWidth: isIPad ? 680 : .infinity)
@@ -262,6 +344,9 @@ struct ReportView: View {
         }
         .sheet(isPresented: $showRecapCard) {
             RecapCardView(sessions: sessions, initialPeriod: recapPeriod)
+        }
+        .sheet(isPresented: $showFocusGoals) {
+            FocusGoalsView()
         }
         .sheet(item: Binding(
             get: { selectedDayForDetail.map { IdentifiableDate(date: $0) } },
@@ -291,6 +376,7 @@ struct ReportView: View {
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         selectedPeriod = period
+                        referenceDate = Date()
                     }
                 } label: {
                     Text(period.title(lang: appLanguage))
@@ -317,29 +403,61 @@ struct ReportView: View {
         )
     }
 
-    // MARK: - Share Button Section
-
-    private var shareButtonSection: some View {
-        Button {
-            showRecapCard = true
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "square.and.arrow.up")
+    private var periodNavigationRow: some View {
+        HStack(spacing: 0) {
+            Button {
+                HapticService.light()
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    shiftPeriod(by: -1)
+                }
+            } label: {
+                Image(systemName: "chevron.left")
                     .font(.system(size: 13, weight: .semibold))
-                Text(selectedPeriod.shareButtonText(lang: appLanguage))
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.75))
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
-            .foregroundStyle(.black)
-            .frame(maxWidth: .infinity)
-            .frame(height: 42)
-            .background(Capsule().fill(Color.white))
+            .buttonStyle(.plain)
+
+            Spacer(minLength: 4)
+
+            Button {
+                guard !isViewingCurrentPeriod else { return }
+                HapticService.light()
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    referenceDate = Date()
+                }
+            } label: {
+                Text(periodRangeLabel)
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.85))
+                    .lineLimit(1)
+            }
+            .buttonStyle(.plain)
+            .disabled(isViewingCurrentPeriod)
+
+            Spacer(minLength: 4)
+
+            Button {
+                HapticService.light()
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    shiftPeriod(by: 1)
+                }
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(isViewingCurrentPeriod ? Color(white: 0.25) : Color(white: 0.75))
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .disabled(isViewingCurrentPeriod)
         }
-        .buttonStyle(.plain)
     }
 
-    // MARK: - 1. Goal Progress Card
+    // MARK: - 1. Focus Summary
 
-    private var goalProgressCard: some View {
+    private var focusSummaryCard: some View {
         let goal = periodGoal
         let targetSecs = periodGoalTargetSeconds
         let actualSecs = periodTotalSeconds
@@ -347,171 +465,365 @@ struct ReportView: View {
         let progress = hasGoal ? min(Double(actualSecs) / Double(targetSecs), 1.0) : 0.0
         let percentageInt = Int((progress * 100).rounded())
 
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(appLanguage == "tr" ? "İLERLEME VE HEDEF" : "PROGRESS AND GOAL")
-                    .font(.system(size: 11, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(white: 0.45))
-                    .tracking(2)
+        return VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(periodEyebrow)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(white: 0.55))
+                        .tracking(1.8)
+
+                    Text(formatDuration(actualSecs))
+                        .font(.system(size: isIPad ? 48 : 38, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+
+                    Text(periodInsightText)
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.55))
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 8)
+
+                Button {
+                    showRecapCard = true
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(.black)
+                        .frame(width: 38, height: 38)
+                        .background(Circle().fill(Color.white))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(selectedPeriod.shareButtonText(lang: appLanguage))
+            }
+
+            if let goal, hasGoal {
+                goalProgressStrip(
+                    goal: goal,
+                    actualSecs: actualSecs,
+                    targetSecs: targetSecs,
+                    progress: progress,
+                    percentageInt: percentageInt
+                )
+            } else {
+                noGoalStrip
+            }
+
+            if actualSecs <= 0 {
+                firstSessionHintStrip
+            }
+
+            HStack(spacing: 0) {
+                summaryStat(
+                    title: appLanguage == "tr" ? "Oturum" : "Sessions",
+                    value: "\(periodSessionCount)",
+                    icon: "play.circle.fill"
+                )
+
+                summaryDivider
+
+                summaryStat(
+                    title: appLanguage == "tr" ? "Ortalama" : "Average",
+                    value: formatDuration(periodAverageSeconds),
+                    icon: "chart.bar.fill"
+                )
+
+                summaryDivider
+
+                summaryStat(
+                    title: appLanguage == "tr" ? "En yoğun" : "Strongest",
+                    value: topWorkAreaName,
+                    icon: "sparkline"
+                )
+            }
+        }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(white: 0.12),
+                            Color(white: 0.075)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.7)
+                )
+                .shadow(color: Color.white.opacity(0.035), radius: 18, x: 0, y: 10)
+        )
+    }
+
+    private func goalProgressStrip(
+        goal: WorkGoal,
+        actualSecs: Int,
+        targetSecs: Int,
+        progress: Double,
+        percentageInt: Int
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(alignment: .firstTextBaseline) {
+                HStack(spacing: 7) {
+                    Image(systemName: "target")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(percentageInt >= 100 ? Color.green : Color.white.opacity(0.75))
+
+                    Text(goal.mode.label(period: goal.period, lang: appLanguage))
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(white: 0.72))
+                }
 
                 Spacer()
 
-                if hasGoal {
-                    HStack(spacing: 8) {
-                        if let goal {
-                            Text(goal.mode.label(period: goal.period, lang: appLanguage))
-                                .font(.system(size: 11, weight: .semibold, design: .rounded))
-                                .foregroundStyle(Color(white: 0.55))
-                        }
+                Text("\(formatDuration(actualSecs)) / \(formatDuration(targetSecs))")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.72))
+                    .monospacedDigit()
 
-                        Text("%\(percentageInt)")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundStyle(percentageInt >= 100 ? Color.green : Color(white: 0.8))
-                            .monospacedDigit()
-                    }
-                }
+                Text("%\(percentageInt)")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(percentageInt >= 100 ? Color.green : Color.white)
+                    .monospacedDigit()
             }
 
-            if hasGoal {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(formatDuration(actualSecs))
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color.white)
-                            .monospacedDigit()
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.white.opacity(0.10))
+                        .frame(height: 8)
 
-                        Text("/ \(formatDuration(targetSecs))")
-                            .font(.system(size: 15, weight: .medium, design: .rounded))
-                            .foregroundStyle(Color(white: 0.5))
-                            .monospacedDigit()
-                    }
-
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule()
-                                .fill(Color(white: 0.14))
-                                .frame(height: 8)
-
-                            Capsule()
-                                .fill(percentageInt >= 100 ? Color.green : Color.white)
-                                .frame(width: max(geo.size.width * CGFloat(progress), 8), height: 8)
-                        }
-                    }
-                    .frame(height: 8)
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: percentageInt >= 100
+                                    ? [Color.green, Color(red: 0.45, green: 0.90, blue: 0.62)]
+                                    : [Color.white, Color(white: 0.72)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: max(geo.size.width * CGFloat(progress), 8), height: 8)
                 }
-            } else {
-                HStack(spacing: 8) {
-                    Image(systemName: "target")
-                        .font(.system(size: 15))
-                        .foregroundStyle(Color(white: 0.4))
-
-                    Text(appLanguage == "tr" ? "Hedef belirlenmedi" : "No goal set")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(white: 0.55))
-                }
-                .padding(.vertical, 4)
             }
+            .frame(height: 8)
         }
-        .padding(16)
+        .padding(13)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(white: 0.07))
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.black.opacity(0.28))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(Color(white: 0.14), lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.08), lineWidth: 0.6)
                 )
         )
     }
 
-    // MARK: - 2. Compact 4-Metric Grid
+    private var noGoalStrip: some View {
+        Button {
+            showFocusGoals = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "target")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color(white: 0.78))
+                    .frame(width: 30, height: 30)
+                    .background(Circle().fill(Color.white.opacity(0.10)))
 
-    private var compactMetricsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-            metricTile(
-                title: appLanguage == "tr" ? "Toplam" : "Total",
-                value: formatDuration(periodTotalSeconds),
-                icon: "clock.fill"
-            )
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(appLanguage == "tr" ? "Hedef belirle" : "Set a goal")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(white: 0.88))
 
-            metricTile(
-                title: appLanguage == "tr" ? "Oturum" : "Sessions",
-                value: appLanguage == "tr" ? "\(periodSessionCount) oturum" : "\(periodSessionCount) sessions",
-                icon: "play.circle.fill"
-            )
+                    Text(appLanguage == "tr" ? "Günlük, haftalık veya aylık ilerlemeni takip et." : "Track daily, weekly, or monthly progress.")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.48))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+                }
 
-            metricTile(
-                title: appLanguage == "tr" ? "Ortalama" : "Average",
-                value: formatDuration(periodAverageSeconds),
-                icon: "chart.bar.fill"
-            )
+                Spacer()
 
-            metricTile(
-                title: appLanguage == "tr" ? "En Çok Çalışılan" : "Top Work Area",
-                value: topWorkAreaName,
-                icon: "square.and.pencil"
+                Image(systemName: "plus")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.black)
+                    .frame(width: 26, height: 26)
+                    .background(Circle().fill(Color.white))
+            }
+            .contentShape(Rectangle())
+            .padding(13)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color.black.opacity(0.28))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.10), lineWidth: 0.6)
+                    )
             )
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(appLanguage == "tr" ? "Hedef belirle" : "Set a goal")
     }
 
-    private func metricTile(title: String, value: String, icon: String) -> some View {
+    private var firstSessionHintStrip: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "play.fill")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(.black)
+                .frame(width: 28, height: 28)
+                .background(Circle().fill(Color.white.opacity(0.92)))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(appLanguage == "tr" ? "İlk oturuma hazır" : "Ready for the first session")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.84))
+
+                Text(appLanguage == "tr" ? "Tamamladığında süre, ortalama ve en yoğun çalışma burada canlanır." : "Duration, average, and strongest work area come alive after you finish.")
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color(white: 0.46))
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 13)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.white.opacity(0.055))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.08), lineWidth: 0.6)
+                )
+        )
+    }
+
+    private var summaryDivider: some View {
+        Rectangle()
+            .fill(Color.white.opacity(0.08))
+            .frame(width: 1, height: 38)
+    }
+
+    private func summaryStat(title: String, value: String, icon: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
+            HStack(spacing: 5) {
                 Image(systemName: icon)
-                    .font(.system(size: 11))
-                    .foregroundStyle(Color(white: 0.45))
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(Color(white: 0.50))
 
                 Text(title)
-                    .font(.system(size: 11, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(white: 0.45))
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.48))
+                    .lineLimit(1)
             }
 
             Text(value)
-                .font(.system(size: 15, weight: .bold, design: .rounded))
-                .foregroundStyle(Color(white: 0.95))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(white: 0.92))
                 .lineLimit(1)
-                .minimumScaleFactor(0.85)
+                .minimumScaleFactor(0.70)
+                .monospacedDigit()
         }
-        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(white: 0.07))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(Color(white: 0.13), lineWidth: 0.5)
-                )
-        )
+        .padding(.horizontal, 10)
     }
 
     // MARK: - 3. Work Breakdown Section
 
     private var workBreakdownSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(appLanguage == "tr" ? "ÇALIŞMA DAĞILIMI" : "WORK BREAKDOWN")
-                .font(.system(size: 11, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(white: 0.45))
-                .tracking(2)
+            sectionHeader(
+                title: appLanguage == "tr" ? "ÇALIŞMA DAĞILIMI" : "WORK BREAKDOWN",
+                detail: "\(workBreakdownItems.filter { $0.totalSeconds > 0 }.count)"
+            )
 
             if workBreakdownItems.isEmpty {
-                HStack {
-                    Text(appLanguage == "tr" ? "Bu dönemde henüz çalışma kaydı yok." : "No work recorded for this period yet.")
-                        .font(.system(size: 12, design: .rounded))
-                        .foregroundStyle(Color(white: 0.45))
-                    Spacer()
-                }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(Color(white: 0.06))
-                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color(white: 0.12), lineWidth: 0.5))
-                )
+                emptyWorkBreakdownCard
             } else {
-                VStack(spacing: 10) {
-                    ForEach(workBreakdownItems) { item in
+                VStack(spacing: 0) {
+                    ForEach(Array(workBreakdownItems.enumerated()), id: \.element.id) { index, item in
                         workBreakdownRow(item)
+                            .padding(.vertical, 12)
+
+                        if index != workBreakdownItems.count - 1 {
+                            Rectangle()
+                                .fill(Color.white.opacity(0.06))
+                                .frame(height: 1)
+                                .padding(.leading, 38)
+                        }
                     }
                 }
+                .padding(.horizontal, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color(white: 0.065))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.09), lineWidth: 0.6)
+                        )
+                )
             }
+        }
+    }
+
+    private var emptyWorkBreakdownCard: some View {
+        VStack(alignment: .leading, spacing: 13) {
+            HStack(spacing: 10) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color(white: 0.72))
+                    .frame(width: 30, height: 30)
+                    .background(Circle().fill(Color.white.opacity(0.08)))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(appLanguage == "tr" ? "Henüz dağılım oluşmadı" : "No breakdown yet")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(white: 0.84))
+
+                    Text(appLanguage == "tr" ? "İlk oturumdan sonra çalışmalarına göre yoğunluk burada görünür." : "After your first session, work-area intensity appears here.")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.46))
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            VStack(spacing: 8) {
+                emptyBreakdownPreviewRow(widthRatio: 0.72, opacity: 0.16)
+                emptyBreakdownPreviewRow(widthRatio: 0.48, opacity: 0.12)
+                emptyBreakdownPreviewRow(widthRatio: 0.30, opacity: 0.09)
+            }
+            .padding(.leading, 2)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color(white: 0.06))
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color(white: 0.12), lineWidth: 0.5))
+        )
+    }
+
+    private func emptyBreakdownPreviewRow(widthRatio: CGFloat, opacity: Double) -> some View {
+        HStack(spacing: 9) {
+            Circle()
+                .fill(Color.white.opacity(opacity + 0.06))
+                .frame(width: 8, height: 8)
+
+            GeometryReader { geo in
+                Capsule()
+                    .fill(Color.white.opacity(opacity))
+                    .frame(width: geo.size.width * widthRatio, height: 5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(height: 5)
         }
     }
 
@@ -521,9 +833,15 @@ struct ReportView: View {
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 HStack(spacing: 8) {
-                    Circle()
-                        .fill(hasDuration ? colorForSubject(item.name) : Color(white: 0.25))
-                        .frame(width: 8, height: 8)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill((hasDuration ? colorForSubject(item.name) : Color(white: 0.22)).opacity(hasDuration ? 0.22 : 0.16))
+                            .frame(width: 30, height: 30)
+
+                        Circle()
+                            .fill(hasDuration ? colorForSubject(item.name) : Color(white: 0.28))
+                            .frame(width: 9, height: 9)
+                    }
 
                     Text(item.name)
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -549,37 +867,29 @@ struct ReportView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(Color(white: 0.12))
-                        .frame(height: 6)
+                        .fill(Color.white.opacity(0.08))
+                        .frame(height: 5)
 
                     if hasDuration {
                         Capsule()
                             .fill(colorForSubject(item.name))
-                            .frame(width: max(geo.size.width * CGFloat(item.percentage), 6), height: 6)
+                            .frame(width: max(geo.size.width * CGFloat(item.percentage), 6), height: 5)
                     }
                 }
             }
-            .frame(height: 6)
+            .frame(height: 5)
+            .padding(.leading, 38)
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color(white: hasDuration ? 0.07 : 0.045))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(Color(white: hasDuration ? 0.13 : 0.10), lineWidth: 0.5)
-                )
-        )
     }
 
     // MARK: - 4. Calendar / Date Activity Section
 
     private var calendarDateSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(appLanguage == "tr" ? "TAKVİM VE GÜN DETAYI" : "CALENDAR & DAY DETAIL")
-                .font(.system(size: 11, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(white: 0.45))
-                .tracking(2)
+            sectionHeader(
+                title: appLanguage == "tr" ? "TAKVİM" : "CALENDAR",
+                detail: appLanguage == "tr" ? "Gün detayı" : "Day detail"
+            )
 
             switch selectedPeriod {
             case .daily:
@@ -594,9 +904,27 @@ struct ReportView: View {
         }
     }
 
+    private func sectionHeader(title: String, detail: String? = nil) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color(white: 0.50))
+                .tracking(1.8)
+
+            Spacer()
+
+            if let detail {
+                Text(detail)
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(white: 0.38))
+                    .lineLimit(1)
+            }
+        }
+    }
+
     private var dailyActivityCard: some View {
         Button {
-            selectedDayForDetail = Date()
+            selectedDayForDetail = now
         } label: {
             HStack(spacing: 14) {
                 ZStack {
@@ -609,11 +937,15 @@ struct ReportView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(appLanguage == "tr" ? "Bugünün Detaylarını Gör" : "View Today's Details")
+                    Text(periodSessionCount == 0
+                         ? (appLanguage == "tr" ? "Bugün henüz oturum yok" : "No sessions today yet")
+                         : (appLanguage == "tr" ? "Bugünün Detaylarını Gör" : "View Today's Details"))
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color(white: 0.95))
 
-                    Text(appLanguage == "tr" ? "\(periodSessionCount) oturum · \(formatDuration(periodTotalSeconds))" : "\(periodSessionCount) sessions · \(formatDuration(periodTotalSeconds))")
+                    Text(periodSessionCount == 0
+                         ? (appLanguage == "tr" ? "Başladığında gün detayın burada birikir." : "Your day detail builds here once you start.")
+                         : (appLanguage == "tr" ? "\(periodSessionCount) oturum · \(formatDuration(periodTotalSeconds))" : "\(periodSessionCount) sessions · \(formatDuration(periodTotalSeconds))"))
                         .font(.system(size: 12, design: .rounded))
                         .foregroundStyle(Color(white: 0.45))
                 }
@@ -637,7 +969,6 @@ struct ReportView: View {
     }
 
     private var currentWeekMondayToSundayDates: [Date] {
-        let now = Date()
         var cal = Calendar.current
         cal.firstWeekday = 2 // Monday
         let comp = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
@@ -773,7 +1104,6 @@ struct ReportView: View {
     }
 
     private var currentMonthDays: [Date] {
-        let now = Date()
         guard let monthInterval = calendar.dateInterval(of: .month, for: now) else { return [] }
         var dates: [Date] = []
         var d = monthInterval.start

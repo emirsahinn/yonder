@@ -1093,13 +1093,25 @@ struct RoomTimerView: View {
     private func executeLeaveRoom() {
         guard !isActionLoading else { return }
         isActionLoading = true
+        // Unknown room state (nil) defaults to showing the ad rather than
+        // silently skipping it — only a confirmed "waiting" room skips it.
+        let shouldShowAdBeforeLeaving = room.map { !$0.isWaiting } ?? true
 
         Task {
             do {
                 try await RoomService.shared.leaveRoom(roomId: roomId)
+                // Mark the room as explicitly left before doing anything else
+                // that can suspend (like the ad), so a teardown that fires
+                // while the ad is pending doesn't trigger a redundant
+                // second leaveRoom() call from cleanUp().
+                await MainActor.run {
+                    self.didLeaveRoomExplicitly = true
+                }
+                if shouldShowAdBeforeLeaving {
+                    _ = await AdMobService.shared.showCompletionInterstitialIfNeeded()
+                }
                 await MainActor.run {
                     self.isActionLoading = false
-                    self.didLeaveRoomExplicitly = true
                     self.activeRoomId = ""
                     self.dismissRoomTimerAfterPortraitSettles()
                 }

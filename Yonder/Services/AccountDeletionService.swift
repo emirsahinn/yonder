@@ -58,6 +58,7 @@ final class AccountDeletionService {
         // 2. Delete Firebase Auth User
         do {
             try await currentUser.delete()
+            try await currentUser.delete()
             print("[AccountDeletionService] ✅ Firebase Auth user deleted: \(uid)")
         } catch let nsError as NSError {
             print("[AccountDeletionService] ❌ Auth delete failed: \(nsError.localizedDescription) (code: \(nsError.code))")
@@ -114,7 +115,7 @@ final class AccountDeletionService {
     private func deleteUserParticipantRecords(uid: String) async throws {
         do {
             let snapshot = try await db.collectionGroup("participants")
-                .whereField(FieldPath.documentID(), isEqualTo: uid)
+                .whereField("uid", isEqualTo: uid)
                 .getDocuments()
 
             if !snapshot.documents.isEmpty {

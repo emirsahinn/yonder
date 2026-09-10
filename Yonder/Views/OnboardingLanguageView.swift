@@ -157,11 +157,12 @@ struct OnboardingLanguageView: View {
                     )
             )
         }
-        .buttonStyle(LanguagePressableStyle())
+        .buttonStyle(PressableButtonStyle())
     }
 }
 
-private struct LanguagePressableStyle: ButtonStyle {
+/// Shared scale-on-press feedback for onboarding buttons.
+struct PressableButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)

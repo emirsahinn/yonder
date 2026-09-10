@@ -7,13 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1396C493E0262F59A49E2DC8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 242CF7147B12A3E6CCCBD0FB /* FirebaseAnalytics */; };
 		2D96F05A301358A000FDD47C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2D96F059301358A000FDD47C /* GoogleSignIn */; };
 		2D96F05C301358A000FDD47C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2D96F05B301358A000FDD47C /* GoogleSignInSwift */; };
 		2DED2E9D3033290900B55C1F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DED2E9C3033290900B55C1F /* WidgetKit.framework */; };
 		2DED2E9F3033290900B55C1F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DED2E9E3033290900B55C1F /* SwiftUI.framework */; };
 		2DED2EAC3033290A00B55C1F /* WidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2DED2E9A3033290900B55C1F /* WidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		33239DFC4013DC4A73EA38FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 64714B6C3B6B9BF35D23C3FD /* FirebaseFirestore */; };
+		B59EB138715B275A1DC9E77F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A32AE7F43CDC3E4D3703C200 /* GoogleService-Info.plist */; };
+		C045B6EF2890902E9DFBB57C /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 2CC5426A00AC99ED8D7262B8 /* GoogleMobileAds */; };
 		C57710190A69D9E28A82F03F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7D72EEE414C14F27B4DA870D /* FirebaseAuth */; };
+		CF5B555C717110951674C504 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 56CF49C811F6C4BA09ED52D4 /* FirebaseCrashlytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,24 +50,25 @@
 		2DED2E9C3033290900B55C1F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2DED2E9E3033290900B55C1F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		2DED2EB930332B1B00B55C1F /* WidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetsExtension.entitlements; sourceTree = "<group>"; };
+		A32AE7F43CDC3E4D3703C200 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; lastKnownFileType = text.plist; name = "GoogleService-Info.plist"; path = "Yonder/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2D0676C030109E6400E7B47D /* Exceptions for "Yonder" folder in "Yonder" target */ = {
+		2D0676C030109E6400E7B47D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 2D0676A330109E6400E7B47D /* Yonder */;
 		};
-		2DED2EB13033290A00B55C1F /* Exceptions for "Widgets" folder in "WidgetsExtension" target */ = {
+		2DED2EB13033290A00B55C1F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 2DED2E993033290900B55C1F /* WidgetsExtension */;
 		};
-		2DED2EB730332A7D00B55C1F /* Exceptions for "Yonder" folder in "WidgetsExtension" target */ = {
+		2DED2EB730332A7D00B55C1F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Activity/YonderActivityAttributes.swift,
@@ -74,19 +79,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2D0676A630109E6400E7B47D /* Yonder */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				2D0676C030109E6400E7B47D /* Exceptions for "Yonder" folder in "Yonder" target */,
-				2DED2EB730332A7D00B55C1F /* Exceptions for "Yonder" folder in "WidgetsExtension" target */,
-			);
-			path = Yonder;
-			sourceTree = "<group>";
-		};
+		2D0676A630109E6400E7B47D /* Yonder */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2D0676C030109E6400E7B47D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 2DED2EB730332A7D00B55C1F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); path = Yonder; sourceTree = "<group>"; };
 		2DED2EA03033290900B55C1F /* Widgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2DED2EB13033290A00B55C1F /* Exceptions for "Widgets" folder in "WidgetsExtension" target */,
+				2DED2EB13033290A00B55C1F /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -102,6 +99,9 @@
 				33239DFC4013DC4A73EA38FF /* FirebaseFirestore in Frameworks */,
 				2D96F05A301358A000FDD47C /* GoogleSignIn in Frameworks */,
 				2D96F05C301358A000FDD47C /* GoogleSignInSwift in Frameworks */,
+				C045B6EF2890902E9DFBB57C /* GoogleMobileAds in Frameworks */,
+				CF5B555C717110951674C504 /* FirebaseCrashlytics in Frameworks */,
+				1396C493E0262F59A49E2DC8 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +125,7 @@
 				2DED2EA03033290900B55C1F /* Widgets */,
 				2DED2E9B3033290900B55C1F /* Frameworks */,
 				2D0676A530109E6400E7B47D /* Products */,
+				A32AE7F43CDC3E4D3703C200 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -157,6 +158,7 @@
 				2D0676A130109E6400E7B47D /* Frameworks */,
 				2D0676A230109E6400E7B47D /* Resources */,
 				2DED2EAD3033290A00B55C1F /* Embed Foundation Extensions */,
+				54AD83B1E858AEDA8EBFDB3C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -172,6 +174,9 @@
 				64714B6C3B6B9BF35D23C3FD /* FirebaseFirestore */,
 				2D96F059301358A000FDD47C /* GoogleSignIn */,
 				2D96F05B301358A000FDD47C /* GoogleSignInSwift */,
+				2CC5426A00AC99ED8D7262B8 /* GoogleMobileAds */,
+				56CF49C811F6C4BA09ED52D4 /* FirebaseCrashlytics */,
+				242CF7147B12A3E6CCCBD0FB /* FirebaseAnalytics */,
 			);
 			productName = Yonder;
 			productReference = 2D0676A430109E6400E7B47D /* Yonder.app */;
@@ -230,6 +235,7 @@
 			packageReferences = (
 				04CFCE8CD562150FEF2B2747 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				2D96F058301358A000FDD47C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				9A734FAAD379FCA0D1D0AABF /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2D0676A530109E6400E7B47D /* Products */;
@@ -247,6 +253,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B59EB138715B275A1DC9E77F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +265,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		54AD83B1E858AEDA8EBFDB3C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2D0676A030109E6400E7B47D /* Sources */ = {
@@ -319,7 +348,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -413,7 +442,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Yonder/Yonder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -423,7 +452,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emir.Yonder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -444,7 +473,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Yonder/Yonder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -454,7 +483,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.emir.Yonder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -475,7 +504,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Widgets/Info.plist;
@@ -486,7 +515,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emir.Yonder.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -506,7 +535,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 5J4FGZLQ7W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Widgets/Info.plist;
@@ -517,7 +546,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emir.Yonder.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -579,9 +608,27 @@
 				minimumVersion = 9.2.0;
 			};
 		};
+		9A734FAAD379FCA0D1D0AABF /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		242CF7147B12A3E6CCCBD0FB /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04CFCE8CD562150FEF2B2747 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		2CC5426A00AC99ED8D7262B8 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A734FAAD379FCA0D1D0AABF /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
 		2D96F059301358A000FDD47C /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2D96F058301358A000FDD47C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
@@ -591,6 +638,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2D96F058301358A000FDD47C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		56CF49C811F6C4BA09ED52D4 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04CFCE8CD562150FEF2B2747 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 		64714B6C3B6B9BF35D23C3FD /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -414,6 +414,7 @@ struct RoomSummaryView: View {
         HapticService.light()
         Task {
             try? await Task.sleep(nanoseconds: 450_000_000)
+            _ = await AdMobService.shared.showCompletionInterstitialIfNeeded()
             await MainActor.run {
                 onDone()
             }

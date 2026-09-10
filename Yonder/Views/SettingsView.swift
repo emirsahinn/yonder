@@ -34,6 +34,7 @@ struct SettingsView: View {
     @State private var showClockStyleSelection: Bool = false // v1: unused, clock style UI hidden
     @State private var showLocalDataMergeConfirmation: Bool = false
     @State private var showProPaywall: Bool = false
+    @State private var showAboutYonder: Bool = false
     @StateObject private var proStore = ProStore.shared
     @State private var showFirstDeletionConfirmation: Bool = false
     @State private var showSecondDeletionSheet: Bool = false
@@ -159,7 +160,7 @@ struct SettingsView: View {
 
                                         Text(proStore.hasPro
                                              ? (selectedLanguage == "tr" ? "Apple hesabındaki aboneliği yönet." : "Manage the subscription on your Apple account.")
-                                             : (selectedLanguage == "tr" ? "Sınırsız çalışma alanı ve hedefler." : "Unlimited work areas and goals."))
+                                             : (selectedLanguage == "tr" ? "Reklamları kaldır, sınırsız alan ve hedefler." : "Remove ads, unlimited work areas and goals."))
                                             .font(.system(size: 11, design: .rounded))
                                             .foregroundStyle(Color(white: 0.45))
                                     }
@@ -374,8 +375,8 @@ struct SettingsView: View {
                             .buttonStyle(.plain)
                         }
 
-                        // ── 5. Hesap ve Sync ───────────────────────────
-                        settingsSection(title: selectedLanguage == "tr" ? "HESAP VE SYNC" : "ACCOUNT & SYNC") {
+                        // ── 5. Hesap ───────────────────────────────────
+                        settingsSection(title: selectedLanguage == "tr" ? "HESAP" : "ACCOUNT") {
                             if authService.isCloudAccountLinked {
                                 VStack(alignment: .leading, spacing: 14) {
                                     HStack(spacing: 12) {
@@ -433,38 +434,7 @@ struct SettingsView: View {
                                     .buttonStyle(.plain)
                                 }
                             } else {
-                                Button {
-                                    showSignInView = true
-                                } label: {
-                                    HStack(spacing: 10) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color(white: 0.14))
-                                                .frame(width: 34, height: 34)
-                                            Text("G")
-                                                .font(.system(size: 14, weight: .bold, design: .rounded))
-                                                .foregroundStyle(Color(white: 0.5))
-                                        }
-
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(selectedLanguage == "tr" ? "Ritmini cihazlar arasında sakla" : "Keep your rhythm across devices")
-                                                .font(.system(size: isIPad ? 15 : 13, weight: .medium, design: .rounded))
-                                                .foregroundStyle(Color(white: 0.85))
-                                            Text(selectedLanguage == "tr" ? "Geçmişini sakla ve online odalara katıl" : "Keep your history and join online rooms")
-                                                .font(.system(size: 11, design: .rounded))
-                                                .foregroundStyle(Color(white: 0.38))
-                                        }
-
-                                        Spacer()
-
-                                        Image(systemName: "chevron.right")
-                                            .font(.system(size: 12))
-                                            .foregroundStyle(Color(white: 0.3))
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
+                                signedOutAccountPrompt
                             }
                         }
 
@@ -490,33 +460,42 @@ struct SettingsView: View {
                             }
                         }
 
-                        // ── 6. Hakkında ─────────────────────────────────
+                        // ── 7. Hakkında ─────────────────────────────────
                         settingsSection(title: selectedLanguage == "tr" ? "HAKKINDA" : "ABOUT") {
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Text("Yonder")
-                                        .font(.system(size: isIPad ? 17 : 15, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(.white)
+                            Button {
+                                showAboutYonder = true
+                            } label: {
+                                HStack(spacing: 12) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.white.opacity(0.08))
+                                            .frame(width: 34, height: 34)
+
+                                        Image(systemName: "info")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundStyle(Color(white: 0.72))
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(selectedLanguage == "tr" ? "Yonder Hakkında" : "About Yonder")
+                                            .font(.system(size: isIPad ? 16 : 14, weight: .regular, design: .rounded))
+                                            .foregroundStyle(Color(white: 0.85))
+
+                                        Text(selectedLanguage == "tr" ? "Sürüm \(appVersion)" : "Version \(appVersion)")
+                                            .font(.system(size: 11, design: .rounded))
+                                            .foregroundStyle(Color(white: 0.45))
+                                    }
 
                                     Spacer()
 
-                                    HStack(spacing: 4) {
-                                        Text(selectedLanguage == "tr" ? "Sürüm" : "Version")
-                                        Text(appVersion)
-                                    }
-                                    .font(.system(size: isIPad ? 14 : 12, design: .rounded))
-                                    .foregroundStyle(Color(white: 0.45))
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(Color(white: 0.4))
                                 }
-
-                                Divider().background(Color(white: 0.15))
-
-                                Text(selectedLanguage == "tr"
-                                     ? "Yonder; odak oturumlarını, çalışmalarını ve hedeflerini sade bir yerde toplar. Zamanla nasıl çalıştığını görmen ve kendi düzenini daha net kurman için tasarlandı."
-                                     : "Yonder brings your focus sessions, work areas, and goals into one calm place. It is designed to help you understand how you work and build a clearer routine over time.")
-                                    .font(.system(size: isIPad ? 14 : 12, design: .rounded))
-                                    .foregroundStyle(Color(white: 0.5))
-                                    .lineSpacing(3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
                             }
+                            .buttonStyle(.plain)
                         }
                     }
                     .frame(maxWidth: isIPad ? 680 : .infinity)
@@ -542,6 +521,12 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showFocusGoals) {
             FocusGoalsView()
+        }
+        .sheet(isPresented: $showAboutYonder) {
+            AboutYonderView(
+                lang: selectedLanguage,
+                appVersion: appVersion
+            )
         }
         .sheet(isPresented: $showSignInView) {
             SignInView(
@@ -707,6 +692,75 @@ struct SettingsView: View {
         }
     }
 
+    private var signedOutAccountPrompt: some View {
+        Button {
+            showSignInView = true
+        } label: {
+            HStack(alignment: .center, spacing: 14) {
+                accountConnectionMark
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(selectedLanguage == "tr" ? "Hesabını bağla" : "Connect your account")
+                        .font(.system(size: isIPad ? 17 : 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(white: 0.94))
+
+                    Text(selectedLanguage == "tr"
+                         ? "Geçmişini koru ve cihazların arasında devam et."
+                         : "Keep your history and continue across devices.")
+                        .font(.system(size: isIPad ? 12 : 11, weight: .regular, design: .rounded))
+                        .foregroundStyle(Color(white: 0.48))
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color(white: 0.38))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(selectedLanguage == "tr" ? "Giriş yap veya hesap bağla" : "Sign in or connect account")
+    }
+
+    private var accountConnectionMark: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.18),
+                            Color.white.opacity(0.07)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: isIPad ? 54 : 48, height: isIPad ? 54 : 48)
+
+            Circle()
+                .strokeBorder(Color.white.opacity(0.16), lineWidth: 0.8)
+                .frame(width: isIPad ? 54 : 48, height: isIPad ? 54 : 48)
+
+            Image(systemName: "person.crop.circle")
+                .font(.system(size: isIPad ? 24 : 21, weight: .light))
+                .foregroundStyle(Color.white.opacity(0.92))
+
+            Circle()
+                .fill(Color(red: 0.95, green: 0.78, blue: 0.35))
+                .frame(width: isIPad ? 13 : 11, height: isIPad ? 13 : 11)
+                .overlay(
+                    Circle()
+                        .strokeBorder(Color.black.opacity(0.50), lineWidth: 1)
+                )
+                .offset(x: isIPad ? 18 : 16, y: isIPad ? -17 : -15)
+        }
+        .frame(width: isIPad ? 54 : 48, height: isIPad ? 54 : 48)
+    }
+
     // MARK: - Helper Section Card
 
     private func settingsSection<Content: View>(
@@ -734,6 +788,183 @@ struct SettingsView: View {
                     )
             )
         }
+    }
+}
+
+// MARK: - About Yonder
+
+struct AboutYonderView: View {
+    let lang: String
+    let appVersion: String
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @StateObject private var adMobService = AdMobService.shared
+
+    private var isIPad: Bool { hSizeClass == .regular }
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: isIPad ? 22 : 18) {
+                    header
+                    aboutCard
+                    legalCard
+                }
+                .frame(maxWidth: isIPad ? 620 : .infinity)
+                .padding(.horizontal, isIPad ? 48 : 20)
+                .padding(.top, isIPad ? 28 : 22)
+                .padding(.bottom, 34)
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .preferredColorScheme(.dark)
+    }
+
+    private var header: some View {
+        HStack(alignment: .top, spacing: 14) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(lang == "tr" ? "YONDER HAKKINDA" : "ABOUT YONDER")
+                    .font(.system(size: isIPad ? 24 : 18, weight: .light, design: .rounded))
+                    .foregroundStyle(Color(white: 0.68))
+                    .tracking(4)
+
+                Text(lang == "tr" ? "Sürüm \(appVersion)" : "Version \(appVersion)")
+                    .font(.system(size: isIPad ? 13 : 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color(white: 0.42))
+            }
+
+            Spacer()
+
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color(white: 0.58))
+                    .frame(width: 34, height: 34)
+                    .background(
+                        Circle()
+                            .fill(Color(white: 0.12))
+                            .overlay(Circle().strokeBorder(Color(white: 0.22), lineWidth: 0.6))
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var aboutCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                Image("SplashLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: isIPad ? 48 : 40, height: isIPad ? 48 : 40)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Yonder")
+                        .font(.system(size: isIPad ? 22 : 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text(lang == "tr" ? "Odak ritmini sadeleştir." : "Keep your focus rhythm clear.")
+                        .font(.system(size: isIPad ? 13 : 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(white: 0.50))
+                }
+            }
+
+            Divider().background(Color(white: 0.15))
+
+            Text(lang == "tr"
+                 ? "Yonder; odak oturumlarını, çalışmalarını ve hedeflerini sade bir yerde toplar. Zamanla nasıl çalıştığını görmen ve kendi düzenini daha net kurman için tasarlandı."
+                 : "Yonder brings your focus sessions, work areas, and goals into one calm place. It is designed to help you understand how you work and build a clearer routine over time.")
+                .font(.system(size: isIPad ? 15 : 13, design: .rounded))
+                .foregroundStyle(Color(white: 0.58))
+                .lineSpacing(4)
+        }
+        .padding(isIPad ? 20 : 16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(white: 0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.7)
+                )
+        )
+    }
+
+    private var legalCard: some View {
+        VStack(spacing: 0) {
+            Link(destination: LegalLinks.privacyPolicyURL) {
+                legalRow(
+                    title: lang == "tr" ? "Gizlilik Politikası" : "Privacy Policy",
+                    icon: "lock.shield"
+                )
+            }
+
+            Divider()
+                .background(Color(white: 0.15))
+                .padding(.leading, 34)
+
+            Link(destination: LegalLinks.termsOfUseURL) {
+                legalRow(
+                    title: lang == "tr" ? "Kullanım Koşulları" : "Terms of Use",
+                    icon: "doc.text"
+                )
+            }
+
+            if adMobService.isPrivacyOptionsRequired {
+                Divider()
+                    .background(Color(white: 0.15))
+                    .padding(.leading, 34)
+
+                Button {
+                    Task {
+                        await adMobService.presentPrivacyOptionsIfNeeded()
+                    }
+                } label: {
+                    legalRow(
+                        title: lang == "tr" ? "Gizlilik seçenekleri" : "Privacy options",
+                        icon: "hand.raised"
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, isIPad ? 18 : 16)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(white: 0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.12), lineWidth: 0.7)
+                )
+        )
+    }
+
+    private func legalRow(title: String, icon: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color(white: 0.62))
+                .frame(width: 22)
+
+            Text(title)
+                .font(.system(size: isIPad ? 15 : 13, weight: .medium, design: .rounded))
+                .foregroundStyle(Color(white: 0.82))
+
+            Spacer()
+
+            Image(systemName: "arrow.up.right")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Color(white: 0.38))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, isIPad ? 15 : 13)
+        .contentShape(Rectangle())
     }
 }
 

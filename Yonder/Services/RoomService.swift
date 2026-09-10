@@ -130,6 +130,7 @@ final class RoomService {
         // Add creator to participants collection
         let participantRef = roomRef.collection("participants").document(currentUserId)
         var participantData: [String: Any] = [
+            "uid": currentUserId,
             "displayName": displayName(for: currentUser, fallback: "Host"),
             "status": "studying",
             "ready": true,
@@ -187,6 +188,7 @@ final class RoomService {
 
         let participantRef = roomRef.collection("participants").document(currentUserId)
         var participantData: [String: Any] = [
+            "uid": currentUserId,
             "displayName": displayName(for: currentUser, fallback: "Participant"),
             "status": "studying",
             "ready": false,
@@ -246,6 +248,7 @@ final class RoomService {
                 if participantSnapshot.exists {
                     // Re-entering active room: preserve existing timing fields!
                     var updateData: [String: Any] = [
+                        "uid": currentUserId,
                         "displayName": self.displayName(for: currentUser, fallback: "Participant")
                     ]
                     if let trimmedWorkItem, !trimmedWorkItem.isEmpty {

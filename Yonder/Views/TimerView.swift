@@ -154,7 +154,11 @@ struct TimerView: View {
                 // before this view existed, so completion has to be checked here too.
                 HapticService.success()
                 presentCompletionAfterPortraitSettles(
-                    PendingSession(durationSeconds: timerVM.totalDuration, completed: true, endedAt: Date())
+                    PendingSession(
+                        durationSeconds: timerVM.totalDuration,
+                        completed: true,
+                        endedAt: Date()
+                    )
                 )
             } else {
                 controlsVisible = true
@@ -180,7 +184,11 @@ struct TimerView: View {
             if completed {
                 HapticService.success()
                 presentCompletionAfterPortraitSettles(
-                    PendingSession(durationSeconds: timerVM.totalDuration, completed: true, endedAt: Date())
+                    PendingSession(
+                        durationSeconds: timerVM.totalDuration,
+                        completed: true,
+                        endedAt: Date()
+                    )
                 )
             }
         }
