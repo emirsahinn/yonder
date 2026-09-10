@@ -66,7 +66,7 @@ Tamamlanmış odak oturumlarının Firestore yedekleri. Yalnızca Google hesabı
 ## 2. `rooms/{code}`
 
 ### Açıklama
-Aktif sessiz odaların meta verisi. Oda kodu (`code`) hem document ID hem de join kodu.
+Aktif odak odalarının meta verisi. Oda kodu (`code`) hem document ID hem de join kodu.
 
 ### Yazar: `RoomService`
 - `createRoom()` — yeni oda yazar

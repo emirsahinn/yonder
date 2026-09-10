@@ -58,7 +58,7 @@ struct YonderLayout {
         return contentWidth
     }
 
-    /// İkincil butonlar (Sessiz Oda, Devam et, Birlikte Çalış) için max genişlik.
+    /// İkincil butonlar (Odak Odası, Devam et, Birlikte Çalış) için max genişlik.
     var secondaryMaxWidth: CGFloat {
         if contentWidth > 700 { return max(1.0, min(contentWidth * 0.72, 620.0)) }
         if contentWidth > 500 { return max(1.0, min(contentWidth * 0.80, 520.0)) }

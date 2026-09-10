@@ -382,7 +382,7 @@ struct RoomTimerView: View {
     private var lobbyMainContent: some View {
         VStack(spacing: isIPad ? 24 : (isLandscapePhone ? 14 : 18)) {
             VStack(spacing: 8) {
-                Text(appLanguage == "tr" ? "ONLİNE ODA" : "ONLINE ROOM")
+                Text(appLanguage == "tr" ? "ODAK ODASI" : "FOCUS ROOM")
                     .font(.system(size: isIPad ? 16 : 13, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(white: 0.45))
                     .textCase(.uppercase)

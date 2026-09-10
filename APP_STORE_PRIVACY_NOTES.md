@@ -30,12 +30,12 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 
 ### Reklamlar / Google AdMob
 - **SDK**: Google Mobile Ads SDK (`GoogleMobileAds`) + Google User Messaging Platform (`UserMessagingPlatform`)
-- **Kullanım yeri**: `AdMobService.swift` — free kullanıcıda sayaç, kronometre ve online oda çıkışlarında interstitial reklam; PRO kullanıcıda reklam çağrısı yapılmaz.
+- **Kullanım yeri**: `AdMobService.swift` — free kullanıcıda sayaç, kronometre ve odak odası çıkışlarında interstitial reklam; PRO kullanıcıda reklam çağrısı yapılmaz.
 - **Geçerli geliştirme ID'leri**: `GADApplicationIdentifier` (`ca-app-pub-5731421075090925~7511238594`) ve `YonderInterstitialAdUnitID` (`ca-app-pub-5731421075090925/1652356923`) gerçek AdMob değerleriyle güncellendi.
 - **Test davranışı**: DEBUG build'leri interstitial için Google sample ad unit ID'sini kullanır; Release build `YonderInterstitialAdUnitID` değerini kullanır.
 - **Canlıya almadan önce**: AdMob Privacy & messaging içinde UMP (GDPR/US states) mesajı oluşturulup yayınlanmalı; `website/app-ads.txt` Firebase Hosting'e deploy edildi, AdMob'da uygulama doğrulamasının tamamlandığı teyit edilmeli; AdMob'da ödeme ayarları tamamlanmalı.
 - **PRO etkisi**: `is_premium_user = true` olduğunda reklam gösterilmez.
-- **ATT kararı**: Şimdilik `NSUserTrackingUsageDescription` ve AppTrackingTransparency prompt'u eklenmedi. İlk reklam sürümü contextual/non-personalized ağırlıklı gidecek; IDFA bazlı kişiselleştirilmiş reklam istenirse ayrıca ATT akışı eklenmeli.
+- **ATT durumu**: `NSUserTrackingUsageDescription` mevcut ve `AdMobService.swift` consent akışından sonra gerekiyorsa AppTrackingTransparency prompt'unu tetikleyebilir. App Store Connect privacy formu ve AdMob ayarları bu gerçek davranışla uyumlu tutulmalı.
 - **SKAdNetwork**: `Info.plist` Google'ın güncel AdMob quick-start listesindeki 50 `SKAdNetworkIdentifier` değerini içerir.
 
 ---
@@ -47,7 +47,7 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 |------|----------|----------------------------------|
 | Firebase UID (anonim veya Google) | Oturum senkronizasyonu | Hayır (anonim) / Evet (Google) |
 | Google e-posta | Hesap bağlantısı | Evet |
-| Özel görünen ad | Sessiz odalarda kimlik | Evet |
+| Özel görünen ad | Odak odalarında kimlik | Evet |
 
 ### Kullanım Verileri
 | Veri | Bulut'a gönderilir mi |
@@ -58,7 +58,7 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 | Planlanan süre | Evet |
 | Oda katılım bilgisi | Evet |
 
-### Odak Odası (Quiet Rooms) — Firestore'da Tutulan Veri
+### Odak Odası (Focus Rooms) — Firestore'da Tutulan Veri
 - Oda kodu, hostId, katılımcı görünen adı, durum (studying/break), konu, süre, zaman damgaları
 
 ---

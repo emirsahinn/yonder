@@ -40,7 +40,7 @@ struct ProfileEditSheet: View {
                 ScrollView {
                     VStack(spacing: 24) {
                         // ── Subtitle ──────────────────────────────────
-                        Text(appLanguage == "tr" ? "Sessiz odalarda bu ad görünür." : "This name appears in quiet rooms.")
+                        Text(appLanguage == "tr" ? "Odak odalarında bu ad görünür." : "This name appears in focus rooms.")
                             .font(.system(size: 13, design: .rounded))
                             .foregroundStyle(Color(white: 0.45))
                             .multilineTextAlignment(.center)

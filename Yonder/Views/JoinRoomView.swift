@@ -52,7 +52,7 @@ struct JoinRoomView: View {
 
                     // Header
                     VStack(spacing: 8) {
-                        Text(appLanguage == "tr" ? "SESSİZ ODAYA KATIL" : "JOIN QUIET ROOM")
+                        Text(appLanguage == "tr" ? "ODAK ODASINA KATIL" : "JOIN FOCUS ROOM")
                             .font(.system(size: isIPad ? 22 : 16, weight: .light, design: .rounded))
                             .foregroundStyle(Color(white: 0.50))
                             .tracking(3)

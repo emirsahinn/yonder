@@ -12,7 +12,7 @@ Yonder may store:
 - Work areas created by the user.
 - Goal and reminder preferences.
 - Profile name, profile image, and Google email if the user connects a Google account.
-- Online room participation details such as room code, display name, status, duration, and timestamps.
+- Focus room participation details such as room code, display name, status, duration, and timestamps.
 
 ## How We Use Information
 
@@ -21,7 +21,7 @@ We use this information to:
 - Track focus history and reports.
 - Sync work areas, goals, sessions, and rooms across devices when a Google account is connected.
 - Show reminders and weekly summaries.
-- Support online focus rooms.
+- Support focus rooms.
 - Unlock and manage Yonder PRO features through Apple in-app purchases.
 - Show ads to free users after focus sessions and offer ad-free use with Yonder PRO.
 
@@ -35,7 +35,7 @@ Yonder PRO purchases are processed by Apple through the App Store. Yonder does n
 
 ## Advertising
 
-Yonder may show ads to free users through Google AdMob after focus sessions, including solo timers, stopwatches, and online focus rooms. Google AdMob may process device, advertising, usage, diagnostic, and approximate location information to provide, measure, and improve ads, depending on the user's consent choices, region, and iOS privacy settings. Yonder PRO removes these in-app ads.
+Yonder may show ads to free users through Google AdMob after focus sessions, including solo timers, stopwatches, and focus rooms. Google AdMob may process device, advertising, usage, diagnostic, and approximate location information to provide, measure, and improve ads, depending on the user's consent choices, region, and iOS privacy settings. Yonder PRO removes these in-app ads.
 
 ## Notifications
 
@@ -49,7 +49,7 @@ If the user selects a profile photo, Yonder uses the iOS photo picker. The selec
 
 Yonder does not sell user data. Yonder uses Google AdMob for ads in the free experience, and Google may process information as described in Google's privacy terms and the user's consent choices.
 
-Yonder uses Firebase and Google Sign-In for authentication, sync, and online room functionality.
+Yonder uses Firebase and Google Sign-In for authentication, sync, and focus room functionality.
 
 ## Data Deletion
 
@@ -57,7 +57,7 @@ Users can permanently delete their account and all stored data directly within t
 
 When account deletion is triggered:
 - All cloud data under `users/{uid}` (sessions, work areas, goals) is permanently erased from Firebase Firestore.
-- Online room participation records are removed and hosted active rooms are ended.
+- Focus room participation records are removed and hosted active rooms are ended.
 - The Firebase Authentication user account is deleted.
 - All local device data (sessions, work areas, goals, reminders, and local profile metadata) is wiped.
 

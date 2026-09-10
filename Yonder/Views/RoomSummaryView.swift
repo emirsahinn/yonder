@@ -2,7 +2,7 @@
 //  RoomSummaryView.swift
 //  Yonder
 //
-//  Summary screen presented when an online focus room completes or when a user leaves.
+//  Summary screen presented when a focus room completes or when a user leaves.
 //  Displays personal focus stats (active work time, break time, work item), participant breakdown,
 //  and saves the user's active work time to reports as a FocusSession.
 //

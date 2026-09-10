@@ -4,7 +4,7 @@
 //
 //  The "Today's Rhythm" ("Bugünkü Ritmin") entry point view welcoming the user,
 //  displaying their current day's focus summary, primary CTA, quick continue action,
-//  quiet room sheet option, mini metrics & insight, and report navigation link.
+//  focus room sheet option, mini metrics & insight, and report navigation link.
 //
 
 import SwiftUI
@@ -303,14 +303,19 @@ struct TodayView: View {
                             }
                             .buttonStyle(.plain)
 
-                            // Online Oda (Secondary CTA)
+                            if lastSession != nil {
+                                quickContinueButton(layout: layout)
+                                    .padding(.top, layout.isWide ? 4 : 2)
+                            }
+
+                            // Odak Odası (Secondary CTA)
                             Button {
                                 showRoomActionsSheet = true
                             } label: {
                                 HStack(spacing: 8) {
                                     Image(systemName: "person.2.fill")
                                         .font(.system(size: 15, weight: .medium))
-                                    Text(appLanguage == "tr" ? "Online Oda" : "Online Room")
+                                    Text(appLanguage == "tr" ? "Odak Odası" : "Focus Room")
                                         .font(.system(size: layout.isWide ? 18 : 16, weight: .semibold, design: .rounded))
                                 }
                                 .foregroundStyle(Color(white: 0.90))
@@ -475,7 +480,7 @@ struct TodayView: View {
                     .frame(width: 8, height: 8)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(appLanguage == "tr" ? "Online odaya dön" : "Return to online room")
+                    Text(appLanguage == "tr" ? "Odak odasına dön" : "Return to focus room")
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white)
 
@@ -780,9 +785,9 @@ struct TodayView: View {
     }
 }
 
-// MARK: - Quiet Room Sheet View
+// MARK: - Focus Room Sheet View
 
-/// Dedicated quiet room action sheet presenting options to create or join a room.
+/// Dedicated focus room action sheet presenting options to create or join a room.
 struct QuietRoomSheetView: View {
 
     @AppStorage("app_language") private var appLanguage: String = "en"
@@ -831,7 +836,7 @@ struct QuietRoomSheetView: View {
                         .padding(.bottom, 2)
 
                     // Title
-                    Text(appLanguage == "tr" ? "Online Oda" : "Online Room")
+                    Text(appLanguage == "tr" ? "Odak Odası" : "Focus Room")
                         .font(.system(size: isIPad ? 22 : 18, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color(white: 0.95))
 
@@ -850,8 +855,8 @@ struct QuietRoomSheetView: View {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 11, weight: .medium))
                         Text(appLanguage == "tr"
-                             ? "Online odalar için giriş yapman gerekiyor."
-                             : "You need to sign in to use online rooms.")
+                             ? "Odak odaları için giriş yapman gerekiyor."
+                             : "You need to sign in to use focus rooms.")
                             .font(.system(size: 12, weight: .regular, design: .rounded))
                     }
                     .foregroundStyle(Color(white: 0.50))
@@ -874,7 +879,7 @@ struct QuietRoomSheetView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 15, weight: .medium))
-                            Text(appLanguage == "tr" ? "Online Oda Oluştur" : "Create Online Room")
+                            Text(appLanguage == "tr" ? "Odak Odası Oluştur" : "Create Focus Room")
                                 .font(.system(size: isIPad ? 16 : 14, weight: .semibold, design: .rounded))
                         }
                         .foregroundStyle(.black)

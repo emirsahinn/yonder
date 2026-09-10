@@ -2,7 +2,7 @@
 //  CreateRoomView.swift
 //  Yonder
 //
-//  Online room setup, room code sharing, and entry to RoomTimerView.
+//  Focus room setup, room code sharing, and entry to RoomTimerView.
 //
 
 import SwiftUI
@@ -62,15 +62,15 @@ struct CreateRoomView: View {
 
         if appLanguage == "tr" {
             if !trimmedWork.isEmpty {
-                return "Yonder’da \(trimmedWork) için \(formattedDurationStr) online odama katıl: \(roomCode)"
+                return "Yonder’da \(trimmedWork) için \(formattedDurationStr) odak odama katıl: \(roomCode)"
             } else {
-                return "Yonder’da \(formattedDurationStr) online odama katıl: \(roomCode)"
+                return "Yonder’da \(formattedDurationStr) odak odama katıl: \(roomCode)"
             }
         } else {
             if !trimmedWork.isEmpty {
-                return "Join my \(formattedDurationStr) online room for \(trimmedWork) on Yonder: \(roomCode)"
+                return "Join my \(formattedDurationStr) focus room for \(trimmedWork) on Yonder: \(roomCode)"
             } else {
-                return "Join my \(formattedDurationStr) online room on Yonder: \(roomCode)"
+                return "Join my \(formattedDurationStr) focus room on Yonder: \(roomCode)"
             }
         }
     }
@@ -81,7 +81,7 @@ struct CreateRoomView: View {
 
             if isLoading {
                 LoadingIndicatorView(
-                    message: appLanguage == "tr" ? "Online oda hazırlanıyor" : "Preparing online room",
+                    message: appLanguage == "tr" ? "Odak odası hazırlanıyor" : "Preparing focus room",
                     onCancel: { isLoading = false }
                 )
             } else if let error = errorMessage {
@@ -208,7 +208,7 @@ struct CreateRoomView: View {
                             .tracking(6)
                             .textCase(.uppercase)
 
-                        Text(appLanguage == "tr" ? "Online oda" : "Online room")
+                        Text(appLanguage == "tr" ? "Odak odası" : "Focus room")
                             .font(.system(size: 12, weight: .regular, design: .rounded))
                             .foregroundStyle(Color(white: 0.35))
                     }
@@ -232,7 +232,7 @@ struct CreateRoomView: View {
                 .tracking(6)
                 .textCase(.uppercase)
 
-            Text(appLanguage == "tr" ? "Online oda için süre ve çalışma seç" : "Choose duration and work area")
+            Text(appLanguage == "tr" ? "Odak odası için süre ve çalışma seç" : "Choose duration and work area")
                 .font(.system(size: layout.isMedium ? 14 : 12, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(white: 0.35))
                 .multilineTextAlignment(.center)
@@ -291,7 +291,7 @@ struct CreateRoomView: View {
         return Button {
             Task { await createRoom() }
         } label: {
-            Text(appLanguage == "tr" ? "Online Oda Oluştur" : "Create Online Room")
+            Text(appLanguage == "tr" ? "Odak Odası Oluştur" : "Create Focus Room")
                 .font(.system(size: isCompact ? 14 : (isIPad ? 18 : 16), weight: .semibold, design: .rounded))
                 .foregroundStyle(.black)
                 .frame(maxWidth: maxWidth)
@@ -314,7 +314,7 @@ struct CreateRoomView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                Text(appLanguage == "tr" ? "ONLINE ODA HAZIR" : "ONLINE ROOM READY")
+                Text(appLanguage == "tr" ? "ODAK ODASI HAZIR" : "FOCUS ROOM READY")
                     .font(.system(size: isIPad ? 18 : 14, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(white: 0.45))
                     .textCase(.uppercase)
@@ -338,8 +338,8 @@ struct CreateRoomView: View {
                 setupSummaryPills
 
                 Text(appLanguage == "tr"
-                     ? "Arkadaşların bu kodla online odaya katılabilir."
-                     : "Friends can join this online room with the code.")
+                     ? "Arkadaşların bu kodla odak odasına katılabilir."
+                     : "Friends can join this focus room with the code.")
                     .font(.system(size: isIPad ? 14 : 12, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(white: 0.40))
                     .multilineTextAlignment(.center)
@@ -351,7 +351,7 @@ struct CreateRoomView: View {
             HStack(spacing: 14) {
                 ShareLink(
                     item: shareMessageText,
-                    subject: Text(appLanguage == "tr" ? "Yonder Online Oda Kodu" : "Yonder Online Room Code"),
+                    subject: Text(appLanguage == "tr" ? "Yonder Odak Odası Kodu" : "Yonder Focus Room Code"),
                     message: Text(shareMessageText)
                 ) {
                     actionButtonLabel(icon: "square.and.arrow.up", title: appLanguage == "tr" ? "Kodu Paylaş" : "Share Code")
@@ -622,8 +622,8 @@ struct CreateRoomView: View {
         } catch {
             HapticService.error()
             errorMessage = appLanguage == "tr"
-                ? "Online oda oluşturulamadı. Lütfen tekrar dene."
-                : "Could not create online room. Please try again."
+                ? "Odak odası oluşturulamadı. Lütfen tekrar dene."
+                : "Could not create focus room. Please try again."
             isLoading = false
         }
     }

@@ -12,13 +12,13 @@ Yonder, çalışma alanlarına göre organize olan, sade ve sakin bir odaklanma 
 
 ## Çözdüğü problem
 
-Klasik bir Pomodoro/sayaç uygulaması değil. Asıl fark: kullanıcı zamanını **çalışma alanlarına** (ders, proje, alışkanlık — "Matematik", "Tez", "İngilizce" gibi) bölerek takip edebiliyor, tek bir genel sayaç yerine. Ayrıca yalnız değil, **arkadaşlarıyla aynı anda online bir "odada" birlikte** de çalışabiliyor — sessiz, kamerasız, sadece "aynı anda çalışıyoruz" hissi.
+Klasik bir Pomodoro/sayaç uygulaması değil. Asıl fark: kullanıcı zamanını **çalışma alanlarına** (ders, proje, alışkanlık — "Matematik", "Tez", "İngilizce" gibi) bölerek takip edebiliyor, tek bir genel sayaç yerine. Ayrıca yalnız değil, **arkadaşlarıyla aynı anda bir odak odasında birlikte** de çalışabiliyor — kamerasız, sadece "aynı anda çalışıyoruz" hissi.
 
 ## Temel özellikler
 
 - **Geri sayım / Kronometre**: Süre belirleyip geri sayım ya da açık uçlu kronometre modunda odaklan
 - **Çalışma Alanları**: Zamanını ders/proje bazında ayrı ayrı takip et
-- **Online Odalar**: Arkadaşlarınla aynı anda, senkronize bir odada birlikte çalış
+- **Odak Odaları**: Arkadaşlarınla aynı anda, senkronize bir odada birlikte çalış
 - **Hedefler (Goals)**: Günlük / haftalık / aylık odaklanma hedefleri koy (PRO)
 - **Raporlar**: Günlük, haftalık, aylık istatistikler; çalışma dağılımı, takvim görünümü, geçmiş oturumlar
 - **Kilit Ekranı & Dynamic Island**: Uygulamadan çıksan bile sayaç Kilit Ekranı'nda ve Dynamic Island'da canlı olarak devam eder (Live Activity)
@@ -49,4 +49,3 @@ Klasik bir Pomodoro/sayaç uygulaması değil. Asıl fark: kullanıcı zamanın�
 - Tez/proje üzerinde uzun süreli, tekrarlayan şekilde çalışanlar
 - Uzaktan çalışan / freelance çalışanlar
 - "Vücut çift çalışma" (body doubling) yöntemiyle arkadaşıyla birlikte çalışmayı seven kullanıcılar
-

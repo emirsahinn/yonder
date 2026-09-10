@@ -88,8 +88,8 @@ struct SignInView: View {
                         .tracking(0.5)
 
                     Text(appLanguage == "tr"
-                         ? "Geçmişini saklamak ve sessiz odalara katılmak için hesabını bağlayabilirsin."
-                         : "Connect your account to keep your history and join quiet rooms.")
+                         ? "Geçmişini saklamak ve odak odalarına katılmak için hesabını bağlayabilirsin."
+                         : "Connect your account to keep your history and join focus rooms.")
                         .font(.system(size: isIPad ? 18 : 15, weight: .regular, design: .rounded))
                         .foregroundStyle(Color(white: 0.42))
                         .multilineTextAlignment(.center)

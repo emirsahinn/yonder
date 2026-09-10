@@ -646,7 +646,7 @@ struct FocusPickerView: View {
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(Color(white: 0.55))
 
-            Text(appLanguage == "tr" ? "İstersen çalışma alanını sonra seçebilirsin." : "You can choose a work area later.")
+            Text(appLanguage == "tr" ? "Çalışma alanı seçersen raporların daha net olur." : "Choose a work area for clearer reports.")
                 .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(Color(white: 0.55))
                 .lineLimit(1)
