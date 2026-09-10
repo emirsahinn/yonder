@@ -28,6 +28,16 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
   - `com.emir.Yonder.pro.yearly`
 - **Ödeme bilgisi**: Apple tarafından işlenir. Yonder kart bilgisi toplamaz veya saklamaz.
 
+### Reklamlar / Google AdMob
+- **SDK**: Google Mobile Ads SDK (`GoogleMobileAds`) + Google User Messaging Platform (`UserMessagingPlatform`)
+- **Kullanım yeri**: `AdMobService.swift` — free kullanıcıda sayaç, kronometre ve online oda çıkışlarında interstitial reklam; PRO kullanıcıda reklam çağrısı yapılmaz.
+- **Geçerli geliştirme ID'leri**: `GADApplicationIdentifier` (`ca-app-pub-5731421075090925~7511238594`) ve `YonderInterstitialAdUnitID` (`ca-app-pub-5731421075090925/1652356923`) gerçek AdMob değerleriyle güncellendi.
+- **Test davranışı**: DEBUG build'leri interstitial için Google sample ad unit ID'sini kullanır; Release build `YonderInterstitialAdUnitID` değerini kullanır.
+- **Canlıya almadan önce**: AdMob Privacy & messaging içinde UMP (GDPR/US states) mesajı oluşturulup yayınlanmalı; `website/app-ads.txt` Firebase Hosting'e deploy edildi, AdMob'da uygulama doğrulamasının tamamlandığı teyit edilmeli; AdMob'da ödeme ayarları tamamlanmalı.
+- **PRO etkisi**: `is_premium_user = true` olduğunda reklam gösterilmez.
+- **ATT kararı**: Şimdilik `NSUserTrackingUsageDescription` ve AppTrackingTransparency prompt'u eklenmedi. İlk reklam sürümü contextual/non-personalized ağırlıklı gidecek; IDFA bazlı kişiselleştirilmiş reklam istenirse ayrıca ATT akışı eklenmeli.
+- **SKAdNetwork**: `Info.plist` Google'ın güncel AdMob quick-start listesindeki 50 `SKAdNetworkIdentifier` değerini içerir.
+
 ---
 
 ## 2. Toplanan Veri Türleri (App Store Privacy Nutrition Label)
@@ -55,7 +65,7 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 
 ## 3. App Store Privacy Form Rehberi
 
-**"Data Used to Track You"** → Hayır. Yonder üçüncü taraf reklam ağlarıyla veri paylaşmaz.
+**"Data Used to Track You"** → Reklam stratejisine göre yeniden değerlendir. AdMob kişiselleştirilmiş reklam/IDFA/çapraz uygulama takip kullanacaksa "Evet" olabilir. Sadece rıza kontrollü, kişiselleştirilmemiş/bağlamsal reklam kullanılacaksa App Store Connect ve Google AdMob ayarlarına göre doğrula.
 
 **"Data Linked to You"** → Evet (Google hesabı bağlıysa): kullanıcı adı, e-posta, odak geçmişi.
 
@@ -69,6 +79,9 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 | Usage Data | Product Interaction | Evet |
 | Usage Data | Other Usage Data | Evet (odak süreleri) |
 | Purchases | Purchase History | Apple yönetir; uygulama yalnızca PRO entitlement durumunu okur |
+| Identifiers | Device ID / Advertising ID | AdMob yapılandırmasına ve ATT/consent ayarlarına göre değerlendir |
+| Location | Coarse Location | AdMob reklam ölçümü/hedeflemesi için Google tarafından işlenebilir; AdMob ayarlarına göre doğrula |
+| Diagnostics | Crash / Performance Data | Google Mobile Ads SDK privacy manifest ve App Store Connect formuna göre doğrula |
 
 ---
 
@@ -112,8 +125,15 @@ Bu döküman Yonder'ın App Store yayın hazırlığında geliştiriciye rehber 
 - [ ] GoogleService-Info.plist → .gitignore kontrolü
 - [ ] NSPhotoLibraryUsageDescription EN çevirisi → InfoPlist.xcstrings
 - [ ] App Store Connect Privacy Nutrition Label formu doldur
-- [ ] Privacy Policy URL hazırla ve App Store Connect metadata'ya ekle
-- [ ] Terms of Use URL hazırla veya Apple Standard EULA kullan
+- [x] Privacy Policy URL hazırla
+- [x] Terms of Use URL hazırla veya Apple Standard EULA kullan
 - [ ] App Store Connect'te Yonder PRO subscription group + monthly/yearly ürünlerini oluştur
 - [ ] Sandbox/TestFlight satın alma ve restore testi yap
 - [ ] TestFlight gerçek cihaz testi: bildirim izni + fotoğraf seçici
+- [x] AdMob gerçek App ID + Interstitial Ad Unit ID değerlerini Info.plist'e gir
+- [x] `website/app-ads.txt` Firebase Hosting'e deploy et
+- [ ] App Store Connect 1.0.1 Marketing URL alanına `https://yonderfocusapp.com` girip kaydet
+- [ ] App Store Connect Support URL alanını `https://yonderfocusapp.com` veya support/contact sayfasına taşı
+- [ ] AdMob Privacy & messaging içinde UMP consent mesajını oluştur ve EEA/UK/CH testini yap
+- [ ] App Store Connect Privacy Nutrition Label'ı AdMob veri kullanımıyla güncelle
+- [ ] Kişiselleştirilmiş reklam hedeflenirse ATT prompt metni ve AppTrackingTransparency akışını ekle

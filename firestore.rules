@@ -217,11 +217,13 @@ service cloud.firestore {
         // katılımcı listesini okuyabilir. Oda dışındaki authenticated kullanıcılar
         // katılımcı isimlerini/durumlarını göremez.
         allow get, list: if isOwner(participantUid)
+          || (isAuthenticated() && resource.data.uid == request.auth.uid)
           || isRoomParticipant(code);
 
         // Katılım (create/update): kendi participant doc'u
         allow create: if isOwner(participantUid)
-          && request.resource.data.keys().hasAll(['displayName', 'status', 'ready', 'joinedAt'])
+          && request.resource.data.keys().hasAll(['uid', 'displayName', 'status', 'ready', 'joinedAt'])
+          && request.resource.data.uid == participantUid
           && isValidParticipantStatus(request.resource.data.status)
           && request.resource.data.ready is bool
           && request.resource.data.displayName is string
@@ -235,7 +237,8 @@ service cloud.firestore {
         // Güncelleme: yalnızca kendi doc'u, sınırlı alanlar
         allow update: if isOwner(participantUid)
           && request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly(['status', 'ready', 'workItemName', 'workItemId', 'workItemUpdatedAt', 'activeSeconds', 'breakSeconds', 'lastStatusChangedAt', 'joinedAt', 'leftAt', 'finalizedActiveSeconds', 'finalizedBreakSeconds'])
+              .hasOnly(['uid', 'status', 'ready', 'workItemName', 'workItemId', 'workItemUpdatedAt', 'activeSeconds', 'breakSeconds', 'lastStatusChangedAt', 'joinedAt', 'leftAt', 'finalizedActiveSeconds', 'finalizedBreakSeconds'])
+          && (!('uid' in request.resource.data) || request.resource.data.uid == participantUid)
           && (
             !('status' in request.resource.data.diff(resource.data).affectedKeys())
             || isValidParticipantStatus(request.resource.data.status)
@@ -271,4 +274,3 @@ service cloud.firestore {
 
   }
 }
-

@@ -119,6 +119,7 @@ Bir odadaki katılımcıların anlık durumu.
 
 | Field | Tip | Açıklama | Değerler |
 |-------|-----|----------|---------|
+| `uid` | String | Katılımcının Firebase Auth UID'si; document ID ile aynı olmalı | |
 | `displayName` | String | Kullanıcının görünen adı | |
 | `status` | String | Anlık durum | `"studying"` / `"break"` / `"left"` |
 | `ready` | Boolean | Lobby'de hazır mı | `true` / `false` |

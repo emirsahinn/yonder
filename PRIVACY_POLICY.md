@@ -1,6 +1,6 @@
 # Yonder Privacy Policy
 
-Last updated: August 3, 2026
+Last updated: August 27, 2026
 
 Yonder is a focus and work tracking app. This policy explains what information Yonder uses and why.
 
@@ -23,6 +23,7 @@ We use this information to:
 - Show reminders and weekly summaries.
 - Support online focus rooms.
 - Unlock and manage Yonder PRO features through Apple in-app purchases.
+- Show ads to free users after focus sessions and offer ad-free use with Yonder PRO.
 
 ## Account Sync
 
@@ -31,6 +32,10 @@ Yonder can be used locally. If the user connects a Google account, selected app 
 ## Payments
 
 Yonder PRO purchases are processed by Apple through the App Store. Yonder does not receive or store full payment card details.
+
+## Advertising
+
+Yonder may show ads to free users through Google AdMob after focus sessions, including solo timers, stopwatches, and online focus rooms. Google AdMob may process device, advertising, usage, diagnostic, and approximate location information to provide, measure, and improve ads, depending on the user's consent choices, region, and iOS privacy settings. Yonder PRO removes these in-app ads.
 
 ## Notifications
 
@@ -42,7 +47,7 @@ If the user selects a profile photo, Yonder uses the iOS photo picker. The selec
 
 ## Data Sharing
 
-Yonder does not sell user data and does not use third-party advertising trackers.
+Yonder does not sell user data. Yonder uses Google AdMob for ads in the free experience, and Google may process information as described in Google's privacy terms and the user's consent choices.
 
 Yonder uses Firebase and Google Sign-In for authentication, sync, and online room functionality.
 
@@ -61,4 +66,3 @@ For additional support or data deletion inquiries, users can contact support at 
 ## Contact
 
 For privacy questions or support requests, please contact info@yonderfocusapp.com.
-
